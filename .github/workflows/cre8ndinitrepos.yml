@@ -33,6 +33,7 @@ jobs:
           # --- Core Services ---
           - "dox-core-store"
           - "dox-core-auth"
+          - "dox-core-user-mgmt"
           - "dox-core-rec-engine"
           # --- Document & Template Services ---
           - "dox-tmpl-service"
