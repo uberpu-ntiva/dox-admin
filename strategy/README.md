@@ -24,6 +24,7 @@
 | Document | Purpose | Who Uses It |
 |----------|---------|-------------|
 | **SERVICES_REGISTRY.md** | Master catalog of all 20 services | Everyone |
+| **PLANNING_FILES_REGISTRY.md** | Master index of all planning documents | Teams, leads, supervisor |
 | **REPO_MAPPING.md** | Map existing repos to Pact services | Core team |
 | **SERVICE_TEMPLATE/** | Standard boilerplate for all repos | New service teams |
 
