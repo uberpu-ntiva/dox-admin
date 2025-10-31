@@ -1,0 +1,106 @@
+# This workflow creates AND initializes all Pact microservice repositories
+# in the 'uberpu-ntiva' organization.
+
+name: Create and Init Pact Repositories
+
+# This allows you to run the workflow manually from the "Actions" tab
+on:
+  workflow_dispatch:
+    inputs:
+      organization:
+        description: 'The GitHub organization to create repos in.'
+        required: true
+        default: 'uberpu-ntiva'
+      git_user_name:
+        description: 'The Git user name for the initial commit.'
+        required: true
+        default: 'Pact Admin Bot'
+      git_user_email:
+        description: 'The Git user email for the initial commit.'
+        required: true
+        default: 'bot@pact-admin.com'
+
+jobs:
+  create-and-init-repositories:
+    runs-on: ubuntu-latest
+    
+    # Define the list of repositories to create/init
+    strategy:
+      matrix:
+        repo:
+          # --- Gateway ---
+          - "dox-gtwy-main"
+          # --- Core Services ---
+          - "dox-core-store"
+          - "dox-core-auth"
+          - "dox-core-rec-engine"
+          # --- Document & Template Services ---
+          - "dox-tmpl-service"
+          - "dox-tmpl-pdf-upload"
+          - "dox-tmpl-field-mapper"
+          # --- Signing & Transaction Services ---
+          - "dox-esig-service"
+          - "dox-esig-webhook-listener"
+          - "dox-rtns-manual-upload"
+          - "dox-rtns-barcode-matcher"
+          # --- Price Activation Services ---
+          - "dox-actv-service"
+          - "dox-actv-listener"
+          # --- Data & Enterprise Services ---
+          - "dox-data-etl-service"
+          - "dox-data-distrib-service"
+          - "dox-data-aggregation-service"
+          # --- Automation & Lifecycle Services ---
+          - "dox-auto-workflow-engine"
+          - "dox-auto-lifecycle-service"
+
+    steps:
+      - name: Create Repository ${{ matrix.repo }}
+        env:
+          GH_TOKEN: ${{ secrets.PACT_ORG_ADMIN_TOKEN }}
+          ORG_NAME: ${{ inputs.organization }}
+        run: |
+          echo "Attempting to create ${{ env.ORG_NAME }}/${{ matrix.repo }}"
+          gh repo create "${{ env.ORG_NAME }}/${{ matrix.repo }}" \
+            --private \
+            --description "Pact microservice: ${{ matrix.repo }}" \
+            || echo "Repository ${{ matrix.repo }} already exists. Proceeding to init."
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ inputs.git_user_name }}"
+          git config --global user.email "${{ inputs.git_user_email }}"
+
+      - name: Clone, Init, and Push README
+        env:
+          # We use the PAT as the password for the clone/push
+          GH_TOKEN: ${{ secrets.PACT_ORG_ADMIN_TOKEN }}
+          ORG_NAME: ${{ inputs.organization }}
+          REPO_NAME: ${{ matrix.repo }}
+        run: |
+          # 1. Clone the repository using the token
+          # We check if it's empty. If not, we skip.
+          git clone "https://oauth2:${{ env.GH_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ env.REPO_NAME }}.git"
+          
+          cd "${{ env.REPO_NAME }}"
+          
+          # Check if the repo is empty (no commits)
+          if [ -z "$(git log -1 2>/dev/null)" ]; then
+            echo "Repository is empty. Initializing..."
+            
+            # 2. Create the README
+            echo "# ${{ env.ORG_NAME }}/${{ env.REPO_NAME }}" > README.md
+            echo "" >> README.md
+            echo "Pact microservice: **${{ env.REPO_NAME }}**" >> README.md
+            echo "" >> README.md
+            echo "Based on specification: \`uberpu-ntiva/dox-spec-main-v2.md\`" >> README.md
+            
+            # 3. Add, Commit, and Push
+            git add README.md
+            git commit -m "Initial commit: Add service README"
+            git push origin main
+            
+            echo "Successfully initialized ${{ env.REPO_NAME }}"
+          else
+            echo "Repository ${{ env.REPO_NAME }} is not empty. Skipping init."
+          fi
