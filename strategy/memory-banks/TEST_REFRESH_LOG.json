@@ -1,0 +1,29 @@
+{
+  "rolling_test_refresh_log": [
+    {
+      "week": 1,
+      "service": "dox-tmpl-pdf-recognizer",
+      "task": "Fix Playwright E2E tests (replace MDL)",
+      "status": "pending",
+      "target_coverage": "100%",
+      "assigned": "Infrastructure"
+    },
+    {
+      "week": 2,
+      "service": "dox-tmpl-pdf-recognizer",
+      "task": "Refresh all tests after MDL removal",
+      "status": "pending",
+      "target_coverage": "100%"
+    }
+  ],
+  "service_test_status": {
+    "dox-tmpl-pdf-recognizer": {
+      "unit_tests": "passing",
+      "integration_tests": "passing",
+      "e2e_tests": "failing (MDL issue)",
+      "coverage": "85%",
+      "last_run": "2025-10-31T00:00:00Z"
+    }
+  },
+  "last_update": "2025-10-31T00:00:00Z"
+}

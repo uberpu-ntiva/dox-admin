@@ -1,0 +1,18 @@
+{
+  "blocking_issues": [
+    {
+      "id": "blocker-001",
+      "title": "Playwright E2E tests timeout on Material Design Lite file inputs",
+      "service": "dox-tmpl-pdf-recognizer",
+      "blocking": ["All frontend testing"],
+      "priority": "CRITICAL",
+      "status": "assigned",
+      "assigned_to": "Infrastructure team",
+      "target_week": 1,
+      "solution": "Replace MDL with vanilla HTML file input (Playwright-compatible)",
+      "created": "2025-10-31T00:00:00Z"
+    }
+  ],
+  "resolved_issues": [],
+  "last_update": "2025-10-31T00:00:00Z"
+}

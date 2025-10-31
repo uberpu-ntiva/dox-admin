@@ -1,0 +1,28 @@
+{
+  "api_version": "v1",
+  "services": {
+    "dox-tmpl-pdf-recognizer": {
+      "version": "1.0.0",
+      "status": "stable",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/templates",
+          "status": "stable",
+          "description": "Upload new PDF template"
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/recognize",
+          "status": "stable",
+          "description": "Upload document for recognition"
+        }
+      ],
+      "last_updated": "2025-10-31T00:00:00Z"
+    }
+  },
+  "cross_service_calls": [],
+  "breaking_changes": [],
+  "api_versioning_policy": "Versioned in URL path (/api/v1, /api/v2, etc)",
+  "last_update": "2025-10-31T00:00:00Z"
+}
