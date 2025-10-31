@@ -1,0 +1,14 @@
+{
+  "team_name": "Frontend",
+  "members": 2,
+  "services_owned": ["dox-gtwy-main"],
+  "current_phase": 3,
+  "start_week": 5,
+  "target_completion_week": 32,
+  "sprint": 1,
+  "sprint_goal": "Plan gateway application (25+ pages)",
+  "complexity": "high",
+  "dependencies": "All 19 backend services",
+  "notes": "Incremental development: 1 page per sprint",
+  "last_update": "2025-10-31T00:00:00Z"
+}

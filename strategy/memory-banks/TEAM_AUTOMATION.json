@@ -1,0 +1,11 @@
+{
+  "team_name": "Automation",
+  "members": 2,
+  "services_owned": ["dox-auto-workflow-engine", "dox-auto-lifecycle-service"],
+  "current_phase": 3,
+  "start_week": 6,
+  "target_completion_week": 26,
+  "sprint": 1,
+  "sprint_goal": "Plan automation services",
+  "last_update": "2025-10-31T00:00:00Z"
+}

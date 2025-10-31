@@ -1,0 +1,13 @@
+{
+  "team_name": "Document",
+  "members": 2,
+  "services_owned": ["dox-tmpl-service", "dox-tmpl-field-mapper"],
+  "current_phase": 2,
+  "start_week": 3,
+  "target_completion_week": 12,
+  "sprint": 1,
+  "sprint_goal": "Build template service and field mapper",
+  "blockers": ["Waiting for dox-core-store and dox-core-auth (Infrastructure team)"],
+  "unblock_week": 8,
+  "last_update": "2025-10-31T00:00:00Z"
+}

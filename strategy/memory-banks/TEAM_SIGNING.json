@@ -1,0 +1,14 @@
+{
+  "team_name": "Signing",
+  "members": 2,
+  "services_owned": ["dox-esig-service", "dox-esig-webhook-listener", "dox-rtns-manual-upload", "dox-rtns-barcode-matcher"],
+  "current_phase": 3,
+  "start_week": 3,
+  "target_completion_week": 18,
+  "sprint": 1,
+  "sprint_goal": "Plan signing and return services",
+  "blocked_by": ["Infrastructure team (dox-core-store, dox-core-auth)"],
+  "unblock_week": 8,
+  "next_task": "Port dox-pact-manual-upload from GitHub",
+  "last_update": "2025-10-31T00:00:00Z"
+}

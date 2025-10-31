@@ -1,0 +1,14 @@
+{
+  "team_name": "Activation",
+  "members": 2,
+  "services_owned": ["dox-actv-service", "dox-actv-listener"],
+  "current_phase": 3,
+  "start_week": 4,
+  "target_completion_week": 20,
+  "sprint": 1,
+  "sprint_goal": "Plan activation and pricing services",
+  "blocked_by": ["Infrastructure team, Signing team"],
+  "complexity": "high",
+  "notes": "Complex duplex workflow state machine - highest complexity",
+  "last_update": "2025-10-31T00:00:00Z"
+}
