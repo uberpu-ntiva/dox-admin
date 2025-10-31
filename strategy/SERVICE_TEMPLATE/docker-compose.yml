@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # Main application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: [service-name]-app
+    ports:
+      - "5000:5000"  # Flask backend
+      # - "3000:3000"  # Node.js frontend (uncomment if applicable)
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=postgresql://pact:pact@db:5432/[service-name]
+      # Add service-specific environment variables here
+    volumes:
+      - ./app:/app
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    depends_on:
+      - db
+    networks:
+      - pact-network
+    command: flask run --host=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # PostgreSQL Database (if needed)
+  db:
+    image: postgres:14-alpine
+    container_name: [service-name]-db
+    environment:
+      POSTGRES_USER: pact
+      POSTGRES_PASSWORD: pact
+      POSTGRES_DB: [service-name]
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - pact-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pact"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (if needed)
+  redis:
+    image: redis:7-alpine
+    container_name: [service-name]-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - pact-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Testing service
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: [service-name]-tests
+    environment:
+      - FLASK_ENV=test
+      - DATABASE_URL=postgresql://pact:pact@db:5432/[service-name]_test
+    volumes:
+      - ./app:/app
+      - ./tests:/tests
+    depends_on:
+      - db
+    networks:
+      - pact-network
+    command: pytest tests/ -v --cov=app
+
+  # Optional: Integration with other Pact services
+  # gateway:
+  #   image: dox-gtwy-main:latest
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - pact-network
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  pact-network:
+    driver: bridge
+
+# Commands to get started:
+# docker-compose up -d                    # Start all services
+# docker-compose logs -f app              # View application logs
+# docker-compose exec app flask shell     # Flask shell
+# docker-compose exec db psql -U pact     # Connect to database
+# docker-compose down                     # Stop all services
