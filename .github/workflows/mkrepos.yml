@@ -1,0 +1,65 @@
+# This workflow creates all Pact microservice repositories
+# in the 'uberpu-ntiva' organization.
+
+name: Create Pact Repositories
+
+# This allows you to run the workflow manually from the "Actions" tab
+on:
+  workflow_dispatch:
+    inputs:
+      organization:
+        description: 'The GitHub organization to create repos in.'
+        required: true
+        default: 'uberpu-ntiva'
+
+jobs:
+  create-repositories:
+    runs-on: ubuntu-latest
+    
+    # Define the list of repositories to create
+    strategy:
+      matrix:
+        repo:
+          # --- Gateway ---
+          - "dox-gtwy-main"
+          # --- Core Services ---
+          - "dox-core-store"
+          - "dox-core-auth"
+          - "dox-core-rec-engine"
+          # --- Document & Template Services ---
+          - "dox-tmpl-service"
+          - "dox-tmpl-field-mapper"
+          # --- Signing & Transaction Services ---
+          - "dox-esig-service"
+          - "dox-esig-webhook-listener"
+          - "dox-rtns-manual-upload"
+          - "dox-rtns-barcode-matcher"
+          # --- Price Activation Services ---
+          - "dox-actv-service"
+          - "dox-actv-listener"
+          # --- Data & Enterprise Services ---
+          - "dox-data-etl-service"
+          - "dox-data-distrib-service"
+          - "dox-data-aggregation-service"
+          # --- Automation & Lifecycle Services ---
+          - "dox-auto-workflow-engine"
+          - "dox-auto-lifecycle-service"
+
+    steps:
+      - name: Check out GitHub CLI
+        uses: actions/checkout@v4
+
+      - name: Create Repository ${{ matrix.repo }}
+        env:
+          # Use the secret you created in the repository settings
+          GH_TOKEN: ${{ secrets.PACT_ORG_ADMIN_TOKEN }}
+          ORG_NAME: ${{ inputs.organization }}
+        run: |
+          echo "Attempting to create ${{ env.ORG_NAME }}/${{ matrix.repo }}"
+          
+          # Use GitHub CLI to create the repo
+          # It will silently skip if the repo already exists
+          gh repo create "${{ env.ORG_NAME }}/${{ matrix.repo }}" \
+            --private \
+            --description "Pact microservice: ${{ matrix.repo }}" \
+            || echo "Repository ${{ matrix.repo }} already exists or failed to create."
