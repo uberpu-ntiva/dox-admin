@@ -1,0 +1,101 @@
+# Pact Platform Standard .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+.nox/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# Node (if using Node.js frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+.npm
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+secrets.json
+
+# Agent coordination (ephemeral)
+.state/
+*.lock
+
+# Runtime data
+storage/
+uploads/
+temp/
+logs/
+
+# Build artifacts
+dist/
+build/
+*.tar
+*.tar.gz
+
+# Docker
+docker-compose.override.yml
+
+# Deployment
+deployments/aws/cfn-output.json
+deployments/azure/*.json
+
+# Test coverage
+.coverage
+.coverage.*
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+
+# Temporary files
+*.tmp
+*.bak
+*.orig
+

@@ -1,0 +1,26 @@
+{
+  "deployment_timeline": {
+    "phase_1_week_4": {
+      "status": "pending",
+      "services": ["dox-tmpl-pdf-recognizer (updated)", "dox-tmpl-pdf-upload (documented)"],
+      "target": "2025-11-24"
+    },
+    "phase_2_week_8": {
+      "status": "pending",
+      "services": ["dox-core-store", "dox-core-auth"],
+      "target": "2025-12-22"
+    },
+    "phase_2_week_12": {
+      "status": "pending",
+      "services": ["dox-tmpl-service", "dox-tmpl-field-mapper"],
+      "target": "2026-01-19"
+    }
+  },
+  "deployment_platform": {
+    "primary": "Azure App Service",
+    "alternative": "AWS ECS Fargate",
+    "registry": "Azure Container Registry (ACR)"
+  },
+  "go_live_decision": "TBD - Week 26",
+  "last_update": "2025-10-31T00:00:00Z"
+}

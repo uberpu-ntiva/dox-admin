@@ -1,0 +1,13 @@
+{
+  "team_name": "Data",
+  "members": 2,
+  "services_owned": ["dox-data-etl-service", "dox-data-distrib-service", "dox-data-aggregation-service"],
+  "current_phase": 3,
+  "start_week": 4,
+  "target_completion_week": 24,
+  "sprint": 1,
+  "sprint_goal": "Plan data and enterprise services",
+  "blocked_by": ["Infrastructure team"],
+  "unblock_week": 8,
+  "last_update": "2025-10-31T00:00:00Z"
+}

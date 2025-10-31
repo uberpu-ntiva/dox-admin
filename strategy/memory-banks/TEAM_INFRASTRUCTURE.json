@@ -1,0 +1,56 @@
+{
+  "team_name": "Infrastructure",
+  "team_lead": "TBD (Agent to be assigned)",
+  "members": [
+    {
+      "agent_id": "agent-backend-infra-1",
+      "role": "Database Engineer",
+      "services": ["dox-core-store"],
+      "status": "available"
+    },
+    {
+      "agent_id": "agent-backend-infra-2",
+      "role": "Backend Engineer",
+      "services": ["dox-core-auth"],
+      "status": "available"
+    }
+  ],
+  "services_owned": ["dox-core-store", "dox-core-auth"],
+  "current_phase": 2,
+  "sprint": 1,
+  "sprint_goal": "Build core database schema and authentication infrastructure",
+  "sprint_start": "2025-11-03",
+  "sprint_end": "2025-11-17",
+  "start_week": 1,
+  "target_completion_week": 8,
+  "current_tasks": [],
+  "blockers": [],
+  "external_dependencies": [
+    {
+      "team": "Document Team",
+      "service": "dox-tmpl-service",
+      "dependency_type": "We provide database layer they depend on",
+      "expected_ready": "2025-11-28",
+      "status": "on_schedule"
+    },
+    {
+      "team": "All Teams",
+      "service": "All services",
+      "dependency_type": "We provide core infrastructure all depend on",
+      "expected_ready": "2025-11-17",
+      "status": "critical_path"
+    }
+  ],
+  "test_pass_rate": "0%",
+  "code_coverage": "0%",
+  "git_commits": 0,
+  "deployment_status": "not_started",
+  "deployment_target": "Azure App Service",
+  "coordination_notes": [
+    "Infrastructure team ready to begin Phase 2",
+    "Waiting for Phase 1 foundation to complete (Week 1-4)",
+    "dox-core-store has highest priority (needed by all services)"
+  ],
+  "last_team_sync": "2025-10-31T00:00:00Z",
+  "last_update": "2025-10-31T00:00:00Z"
+}
