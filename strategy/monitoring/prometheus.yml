@@ -1,0 +1,66 @@
+# Prometheus Configuration for DOX Platform Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # DOX Workflow Orchestrator
+  - job_name: 'dox-workflow-orchestrator'
+    static_configs:
+      - targets: ['dox-workflow-orchestrator:5000']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # DOX Validation Service
+  - job_name: 'dox-validation-service'
+    static_configs:
+      - targets: ['dox-validation-service:5007']
+    metrics_path: '/api/v1/metrics'
+    scrape_interval: 30s
+
+  # DOX Template PDF Upload
+  - job_name: 'dox-tmpl-pdf-upload'
+    static_configs:
+      - targets: ['dox-tmpl-pdf-upload:5002']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # DOX Template PDF Recognizer
+  - job_name: 'dox-tmpl-pdf-recognizer'
+    static_configs:
+      - targets: ['dox-tmpl-pdf-recognizer:5003']
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # Redis
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+    scrape_interval: 30s
+
+  # PostgreSQL
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+    scrape_interval: 30s
+
+  # Node Exporter (System Metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+
+  # cAdvisor (Container Metrics)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
