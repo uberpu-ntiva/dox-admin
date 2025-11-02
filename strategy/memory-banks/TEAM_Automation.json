@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "team_name": "Automation",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Automation",
+    "members": ["Agent-Automation-Lead", "Agent-Engine-Dev", "Agent-Lifecycle-Dev"],
+    "services": ["dox-auto-workflow-engine", "dox-auto-lifecycle-service"],
+    "status": "active"
+  },
+  "current_phase": "Week 2 Critical Path",
+  "sprint_goal": "Workflow engine operational, lifecycle tracking working",
+  "sprint_goal_detail": "Critical orchestration layer - prerequisite for all other teams",
+  "team_blockers": [],
+  "critical_path_status": "on_critical_path",
+  "test_pass_rate": 0,
+  "deployment_status": "in_development",
+  "priority": "P1 - Blocking",
+  "next_sync": "2025-11-03T09:00:00Z"
+}
