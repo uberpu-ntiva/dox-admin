@@ -1,0 +1,193 @@
+name: recognize_template_from_document
+service: dox-tmpl-pdf-recognizer
+version: "1.0.0"
+description: |
+  Template recognition workflow for manual documents. Analyzes PDF structure,
+  scores against candidate templates, makes confidence-based decisions, and
+  optionally routes to multi-agent collaboration dashboard for human approval.
+  Used in document upload workflow when datamatrix code not present.
+priority: high
+
+trigger:
+  type: api_request
+  source: POST /api/recognize/template
+
+conditions:
+  - type: file_validation
+    check: "Valid PDF file, not corrupted"
+
+steps:
+  - name: PDF Analysis
+    action: custom_logic
+    params:
+      logic: "analyze_pdf_structure(pdf_file)"
+      extracts:
+        - text_content_all_pages
+        - form_fields
+        - images_and_positions
+        - page_count
+        - field_count
+    on_success: Template Candidate Selection
+    on_failure: escalate
+    error_message: "Failed to analyze PDF structure"
+
+  - name: Template Candidate Selection
+    action: api_call
+    params:
+      service: dox-tmpl-service
+      method: GET
+      endpoint: /api/templates
+      body: "{page_count, field_count_range}"
+      timeout_seconds: 5
+    on_success: Scoring and Matching
+    on_failure: escalate
+    error_message: "Failed to retrieve templates"
+
+  - name: Scoring and Matching
+    action: custom_logic
+    params:
+      logic: "score_against_templates(document_profile, candidates)"
+      scoring_formula: |
+        text_match_score: 70% weight (OCR text vs template labels)
+        form_field_score: 30% weight (field position/size similarity)
+        overall_score: (text_match * 0.7) + (form_field * 0.3)
+      returns: ranked_templates_with_scores
+    on_success: Decision Making
+    on_failure: escalate
+
+  - name: Decision Making
+    action: custom_logic
+    params:
+      logic: "make_confidence_decision(scores)"
+      high_confidence: "top_score > 0.85"
+      medium_confidence: "0.50 < top_score <= 0.85"
+      low_confidence: "top_score <= 0.50"
+    on_success: "Route based on confidence"
+    on_failure: escalate
+
+  - name: Create Recognition Profile (Auto-Accept)
+    action: store_result
+    params:
+      table: recognition_profiles
+      data: |
+        {
+          document_id,
+          template_id: top_match.template_id,
+          confidence_score: top_score,
+          field_mappings: ocr_text_to_template,
+          recognition_timestamp: ISO8601,
+          approval_type: auto_accepted,
+          method: high_confidence_match
+        }
+    on_success: Update Learning System
+    on_failure: escalate
+
+  - name: Multi-Agent Collaboration Dashboard
+    action: manual_intervention
+    params:
+      interface: web_dashboard
+      display:
+        left_panel: document_preview_with_ocr_overlay
+        right_panel: template_options_ranked_by_score
+        highlights: matched_fields_and_confidence
+      operator_actions:
+        - select_best_template
+        - confirm_field_mappings
+        - reject_all_options
+      timeout_minutes: 30
+    on_success: Operator Approval
+    on_failure: operator_rejection
+
+  - name: Operator Approval
+    action: store_result
+    params:
+      table: recognition_profiles
+      data: |
+        {
+          document_id,
+          template_id: operator_selected.template_id,
+          confidence_score: operator_selected.score,
+          field_mappings: operator_confirmed,
+          recognition_timestamp: ISO8601,
+          approved_by: operator_user_id,
+          approval_type: human_approved,
+          method: multi_agent_dashboard
+        }
+    on_success: Update Learning System
+    on_failure: escalate
+
+  - name: Update Learning System
+    action: custom_logic
+    params:
+      logic: "update_ml_models_and_metrics(recognition_profile)"
+      if_human_approved: "Use as training data for future recognition"
+      updates:
+        - template_confidence_metrics
+        - recognition_accuracy_per_template
+        - operator_decision_patterns
+    on_success: Update Memory Bank
+    on_failure: skip_step
+
+  - name: Update Memory Bank
+    action: update_memory
+    params:
+      updates:
+        - file: SERVICE_dox-tmpl-pdf-recognizer.json
+          data: "{recognition_event, confidence_score, template_matched}"
+        - file: TEAM_Document.json
+          data: "{recognition_accuracy_metric, last_recognition}"
+        - file: SUPERVISOR.json
+          data: "{recognition_event_logged}"
+        - file: WORKFLOW_EXECUTION_LOG.json
+          data: "{workflow_status, duration_ms}"
+
+error_handling:
+  escalate: "Mark blocking issue, notify Signing Team"
+  skip_step: "Continue without ML update, log warning"
+  operator_rejection: "Mark document as unable_to_recognize, return to submitter"
+
+memory_bank_updates:
+  - file: SERVICE_dox-tmpl-pdf-recognizer.json
+    update:
+      recognition_event:
+        document_id: "{document_id}"
+        template_matched: "{template_id}"
+        confidence_score: "{score}"
+        approval_type: "{auto_accepted|human_approved|rejected}"
+        timestamp: "{ISO8601}"
+      recognition_events_total: "+1"
+      status: active
+  - file: TEAM_Document.json
+    update:
+      recognition_accuracy:
+        total_recognitions: "+1"
+        auto_accepted: "+{1 if auto_accepted else 0}"
+        human_approved: "+{1 if human_approved else 0}"
+        rejected: "+{1 if rejected else 0}"
+      last_recognition: "{timestamp, template_id}"
+  - file: SUPERVISOR.json
+    update:
+      recognition_events_logged: "+1"
+      last_recognition_at: "{ISO8601}"
+  - file: WORKFLOW_EXECUTION_LOG.json
+    update:
+      entry:
+        workflow_id: "{UUID}"
+        workflow_name: recognize_template_from_document
+        start_time: "{ISO8601}"
+        end_time: "{ISO8601}"
+        status: "{success|failed}"
+        steps_executed: "{count}"
+        service: dox-tmpl-pdf-recognizer
+        decision_path: "{auto_accepted|human_review|rejected}"
+
+configuration:
+  confidence_threshold_high: 0.85
+  confidence_threshold_low: 0.50
+  confidence_threshold_medium: 0.50
+  text_match_weight: 0.70
+  form_field_weight: 0.30
+  pdf_analysis_timeout_seconds: 20
+  template_query_timeout_seconds: 5
+  operator_decision_timeout_minutes: 30
+  max_candidate_templates: 10
