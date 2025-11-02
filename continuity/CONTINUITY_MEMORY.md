@@ -444,19 +444,56 @@
 
 ---
 
+## Next Steps
+
+### 🎯 NEXT NAMED TASK: Complete dox-core-store Service
+
+**Task File**: `/dox-admin/continuity/NEXT_TASK_dox-core-store-completion.md`
+**Priority**: CRITICAL PATH
+**Estimated Duration**: 3-5 days
+**Status**: Ready to Start
+
+**Why This Task Next**:
+- dox-core-store is 90% complete with solid foundation
+- It's the critical path blocker for all 18 downstream services
+- Completing it provides a reference implementation for all other services
+- Infrastructure Team plan calls for completing dox-core-store (Weeks 1-4) before starting dox-core-auth
+- User confirmed "all branches are checked in" suggesting readiness to wrap up current work
+
+**What's Already Done**:
+- ✅ Complete database architecture (9 tables)
+- ✅ Full SQLAlchemy models with business logic
+- ✅ SharePoint Graph API integration with Azure Blob fallback
+- ✅ DocumentService with upload/download workflow
+- ✅ Flask application framework with middleware
+- ✅ API routes for sites and documents (partial implementation)
+
+**Remaining Work**:
+1. Set up Alembic migration system
+2. Create comprehensive test suite
+3. Complete remaining API routes (users, templates, bundles full CRUD)
+4. Update README.md with actual service documentation
+5. Register service in SERVICES_REGISTRY.md as "Active (v1.0.0)"
+6. Create deployment configuration
+
+**Success Criteria**:
+- All Alembic migrations working forward and backward
+- Test coverage >80% for all models and services
+- Complete REST API with proper error handling
+- Production-ready documentation
+- Service registered as active in registry
+
 ## How to Continue from Here
 
-### Session 2 Checklist
+### Session 3 Checklist
 
-- [ ] Pull this branch to main
-- [ ] Review all files in `/dox-admin/strategy/`
-- [ ] Read `README.md` for navigation
-- [ ] Begin T04: Fix Playwright tests
-- [ ] Begin T09: Complete pdf-upload documentation
-- [ ] Parallel: Begin T05 file validation
-- [ ] Populate service and team plans (Week 2)
-- [ ] Clone dox-pact-manual-upload (if not yet in workspace)
-- [ ] Begin porting (Week 2)
+- [ ] Read NEXT_TASK_dox-core-store-completion.md
+- [ ] Set up Alembic migration system for dox-core-store
+- [ ] Create comprehensive test suite (unit + integration)
+- [ ] Complete remaining API routes (users, templates, bundles)
+- [ ] Update README.md with actual service details
+- [ ] Register dox-core-store in SERVICES_REGISTRY.md as "Active (v1.0.0)"
+- [ ] Begin dox-core-auth (next critical path service)
 
 ### For Repository Porting
 
