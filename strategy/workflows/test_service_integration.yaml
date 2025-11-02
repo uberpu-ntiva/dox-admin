@@ -1,0 +1,223 @@
+name: test_service_integration
+service: dox-workflow-orchestrator
+version: "1.0.0"
+description: |
+  Service integration testing workflow. Validates service readiness through
+  unit tests, E2E tests, API contract validation, and integration tests.
+  Triggered after service deployment or on manual request. Updates SERVICE_*.json
+  with test results and blocks deployment if critical tests fail.
+priority: high
+
+trigger:
+  type: cascade
+  source: "service_deploy_event OR manual_test_request"
+
+conditions:
+  - type: service_ready
+    check: "Service responding on health check endpoint"
+  - type: dependency_ready
+    check: "Service dependencies deployed and healthy"
+
+steps:
+  - name: Run Embedded Unit Tests
+    action: api_call
+    params:
+      service: "{service_under_test}"
+      method: POST
+      endpoint: /api/internal/tests/unit
+      body: "{test_suite: all}"
+      timeout_seconds: 60
+    on_success: Run E2E Tests
+    on_failure: unit_tests_failed
+    error_message: "Unit tests failed - see test results"
+
+  - name: Run E2E Tests
+    action: api_call
+    params:
+      service: "{service_under_test}"
+      method: POST
+      endpoint: /api/internal/tests/e2e
+      body: "{test_suite: all, browser: chromium}"
+      timeout_seconds: 120
+    on_success: Validate API Contracts
+    on_failure: e2e_tests_failed
+    error_message: "E2E tests failed - see test results"
+    special_handling: |
+      For dox-tmpl-pdf-recognizer (T04):
+        - Uses Playwright with vanilla HTML file input
+        - Tests: file upload, template recognition, multi-agent dashboard
+      For other services:
+        - Standard Playwright tests with service-specific flows
+
+  - name: Validate API Contracts
+    action: custom_logic
+    params:
+      logic: "validate_api_against_contract(service)"
+      reads: API_CONTRACTS.json
+      checks:
+        - "All expected endpoints present"
+        - "Response schemas match contract"
+        - "Error codes documented"
+        - "No breaking changes introduced"
+      returns: validation_report
+    on_success: Update Test Results
+    on_failure: contract_violation
+    error_message: "API contract validation failed"
+
+  - name: Update Test Results
+    action: update_memory
+    params:
+      file: SERVICE_[service_name].json
+      update: |
+        {
+          test_results: {
+            unit_tests: {
+              status: success,
+              passed: {count},
+              failed: {count},
+              skipped: {count},
+              coverage_percent: {percent},
+              last_run: ISO8601
+            },
+            e2e_tests: {
+              status: success,
+              passed: {count},
+              failed: {count},
+              duration_seconds: {time},
+              last_run: ISO8601
+            },
+            api_contract: {
+              status: valid,
+              endpoints_verified: {count},
+              last_validated: ISO8601
+            }
+          },
+          test_pass_rate: {percent},
+          ready_for_deployment: {bool},
+          last_test_run: ISO8601
+        }
+    on_success: Publish Test Results
+    on_failure: escalate
+
+  - name: Publish Test Results
+    action: publish_event
+    params:
+      event_system: redis_pub_sub
+      events:
+        - event_type: service_tests_completed
+          message: "Tests completed for {service}"
+        - event_type: ready_for_deployment
+          condition: "all_tests_passed && contract_valid"
+          message: "Service ready for deployment"
+        - event_type: deployment_blocked
+          condition: "critical_tests_failed"
+          message: "Deployment blocked due to test failures"
+    on_success: Log Test Run
+    on_failure: skip_step
+
+  - name: Log Test Run
+    action: update_memory
+    params:
+      file: WORKFLOW_EXECUTION_LOG.json
+      update: |
+        {
+          entry: {
+            workflow_id: {UUID},
+            workflow_name: test_service_integration,
+            service_tested: {service_name},
+            start_time: ISO8601,
+            end_time: ISO8601,
+            status: success,
+            unit_tests_passed: {bool},
+            e2e_tests_passed: {bool},
+            contract_valid: {bool},
+            ready_for_deployment: {bool}
+          }
+        }
+    on_success: workflow_complete
+    on_failure: skip_step
+
+error_handling:
+  unit_tests_failed: "Log failure to SERVICE_*.json, block deployment"
+  e2e_tests_failed: "Log failure to SERVICE_*.json, block deployment"
+  contract_violation: "Log violation to SERVICE_*.json and BLOCKING_ISSUES.json, block deployment"
+  escalate: "Mark critical test failure, notify team"
+
+memory_bank_updates:
+  - file: SERVICE_[service].json
+    update:
+      test_results:
+        unit_tests:
+          status: "{passed|failed}"
+          coverage_percent: "{percent}"
+          last_run: "{ISO8601}"
+        e2e_tests:
+          status: "{passed|failed}"
+          last_run: "{ISO8601}"
+        api_contract:
+          status: "{valid|invalid}"
+          last_validated: "{ISO8601}"
+      test_pass_rate: "{percent}"
+      ready_for_deployment: "{bool}"
+  - file: BLOCKING_ISSUES.json
+    update:
+      on_critical_failure:
+        issue_id: "{UUID}"
+        severity: critical
+        service: "{service_name}"
+        issue_type: critical_tests_failed
+        description: "Tests blocking deployment"
+        timestamp: "{ISO8601}"
+        assigned_team: "{owning_team}"
+  - file: WORKFLOW_EXECUTION_LOG.json
+    update:
+      entry:
+        workflow_id: "{UUID}"
+        workflow_name: test_service_integration
+        service_tested: "{service_name}"
+        start_time: "{ISO8601}"
+        end_time: "{ISO8601}"
+        status: "{success|failed}"
+        unit_tests_passed: "{bool}"
+        e2e_tests_passed: "{bool}"
+        contract_valid: "{bool}"
+        ready_for_deployment: "{bool}"
+
+service_specific_tests:
+  dox-tmpl-pdf-recognizer:
+    e2e_tests:
+      - name: File Upload with Vanilla HTML Input
+        description: "Tests standard HTML file input (not MDL)"
+        coverage: "document upload workflow"
+      - name: Template Recognition
+        description: "Tests recognition scoring and confidence evaluation"
+        coverage: "template matching workflow"
+      - name: Multi-Agent Dashboard
+        description: "Tests dashboard for human decision making"
+        coverage: "human review workflow"
+  dox-tmpl-pdf-upload:
+    e2e_tests:
+      - name: PDF Upload Workflow
+        description: "Full document upload and storage"
+        coverage: "upload to storage integration"
+    test_documentation_examples: true
+  dox-core-store:
+    e2e_tests:
+      - name: Document Storage
+        description: "Store and retrieve documents"
+        coverage: "storage operations"
+  dox-core-auth:
+    e2e_tests:
+      - name: JWT Authentication
+        description: "Token generation and validation"
+        coverage: "auth middleware"
+
+configuration:
+  unit_test_timeout_seconds: 60
+  e2e_test_timeout_seconds: 120
+  api_contract_validation_timeout_seconds: 30
+  retry_failed_tests: true
+  retry_attempts: 2
+  min_coverage_percent: 80
+  critical_test_failure_blocks_deployment: true
+  run_integration_tests_if_available: true
