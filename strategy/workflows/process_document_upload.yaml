@@ -1,0 +1,198 @@
+name: process_document_upload
+service: All Upload Services
+version: "1.0.0"
+description: |
+  Main workflow for document upload processing. Handles both system documents
+  (with datamatrix codes) and manual documents (requiring template matching).
+  Routes documents through validation, storage, classification, extraction,
+  and account association.
+priority: high
+
+trigger:
+  type: api_request
+  source: POST /api/documents/upload
+
+conditions:
+  - type: user_permission
+    check: "user authenticated with valid JWT"
+
+steps:
+  - name: File Validation
+    action: api_call
+    params:
+      service: dox-validation-service
+      method: POST
+      endpoint: /api/validate/file
+      body: "{file_path, file_size, mime_type, user_id}"
+      timeout_seconds: 10
+    on_success: File Storage
+    on_failure: reject_request
+    error_message: "File validation failed - {validation_error}"
+
+  - name: File Storage
+    action: api_call
+    params:
+      service: dox-core-store
+      method: POST
+      endpoint: /api/documents
+      body: "{filename, file_hash, file_size, user_id, upload_timestamp}"
+      timeout_seconds: 15
+    on_success: Document Classification
+    on_failure: escalate
+    error_message: "Failed to store document - {storage_error}"
+
+  - name: Document Classification
+    action: custom_logic
+    params:
+      logic: "check_for_datamatrix_code(document)"
+      true_path: System Document Processing
+      false_path: Manual Document Processing
+    on_success: "Branch based on classification"
+    on_failure: escalate
+
+  - name: System Document Processing
+    action: api_call
+    params:
+      service: dox-tmpl-pdf-recognizer
+      method: POST
+      endpoint: /api/recognize/datamatrix
+      body: "{document_id, document_path}"
+      timeout_seconds: 20
+    on_success: Extract System Document Fields
+    on_failure: manual_review_required
+
+  - name: Manual Document Processing
+    action: api_call
+    params:
+      service: dox-tmpl-pdf-recognizer
+      method: POST
+      endpoint: /api/recognize/template
+      body: "{document_id, document_path}"
+      timeout_seconds: 30
+    on_success: Evaluate Template Confidence
+    on_failure: escalate
+
+  - name: Evaluate Template Confidence
+    action: custom_logic
+    params:
+      logic: "evaluate_confidence_score(confidence)"
+      high_confidence: "confidence > 0.85"
+      medium_confidence: "0.50 <= confidence <= 0.85"
+      low_confidence: "confidence < 0.50"
+    on_success: "Route based on confidence"
+    on_failure: escalate
+
+  - name: Extract System Document Fields
+    action: api_call
+    params:
+      service: dox-tmpl-service
+      method: POST
+      endpoint: /api/templates/extract
+      body: "{document_id, template_id, ocr_output}"
+      timeout_seconds: 20
+    on_success: Account Association
+    on_failure: manual_field_verification
+
+  - name: Extract Manual Document Fields (High Confidence)
+    action: api_call
+    params:
+      service: dox-tmpl-service
+      method: POST
+      endpoint: /api/templates/extract
+      body: "{document_id, template_id, ocr_output}"
+      timeout_seconds: 20
+    on_success: Account Association
+    on_failure: manual_field_verification
+
+  - name: Human Review Required
+    action: manual_intervention
+    params:
+      interface: multi-agent collaboration dashboard
+      display: "{document_preview, template_options, confidence_scores}"
+      operator_action: select_template_and_confirm_fields
+    on_success: Extract Manual Document Fields (Approved)
+    on_failure: document_unprocessable
+
+  - name: Extract Manual Document Fields (Approved)
+    action: api_call
+    params:
+      service: dox-tmpl-service
+      method: POST
+      endpoint: /api/templates/extract
+      body: "{document_id, template_id, ocr_output, operator_id}"
+      timeout_seconds: 20
+    on_success: Account Association
+    on_failure: manual_field_verification
+
+  - name: Account Association
+    action: api_call
+    params:
+      service: dox-core-store
+      method: POST
+      endpoint: /api/documents/associate
+      body: "{document_id, extracted_fields, account_id}"
+      timeout_seconds: 10
+    on_success: Workflow Completion
+    on_failure: account_not_found
+
+  - name: Workflow Completion
+    action: update_memory
+    params:
+      updates:
+        - file: SERVICE_[service].json
+          data: "{document_id, status: success, processed_timestamp}"
+        - file: TEAM_[team].json
+          data: "{increment: processed_documents, last_document: {id, timestamp}}"
+        - file: SUPERVISOR.json
+          data: "{increment: total_documents_processed}"
+        - file: WORKFLOW_EXECUTION_LOG.json
+          data: "{workflow_id, status: success, steps_executed: 12, duration_ms}"
+
+error_handling:
+  reject_request: "Return 400 with validation error - do not proceed"
+  escalate: "Mark blocking issue in BLOCKING_ISSUES.json, notify team"
+  manual_review_required: "Route to human review queue, update SERVICE_*.json status"
+  manual_field_verification: "Flag document for manual field review"
+  account_not_found: "Escalate - log to BLOCKING_ISSUES.json with account info"
+  document_unprocessable: "Mark document as failed, notify submitter"
+
+memory_bank_updates:
+  - file: SERVICE_[service].json
+    update:
+      processed_documents: "+1"
+      last_document_id: "{document_id}"
+      status: success
+      processed_timestamp: "{ISO8601}"
+  - file: TEAM_[team].json
+    update:
+      daily_metrics:
+        documents_processed: "+1"
+        last_document: "{document_id, timestamp}"
+  - file: SUPERVISOR.json
+    update:
+      total_documents_processed: "+1"
+      last_document_processed_at: "{ISO8601}"
+  - file: WORKFLOW_EXECUTION_LOG.json
+    update:
+      entry:
+        workflow_id: "{UUID}"
+        workflow_name: process_document_upload
+        start_time: "{ISO8601}"
+        end_time: "{ISO8601}"
+        status: success
+        steps_executed: 12
+        service: "{service_name}"
+
+configuration:
+  max_file_size_mb: 50
+  allowed_mime_types:
+    - application/pdf
+    - image/png
+    - image/jpeg
+    - image/tiff
+  datamatrix_detection_threshold: 0.95
+  template_confidence_high: 0.85
+  template_confidence_low: 0.50
+  ocr_timeout_seconds: 20
+  storage_retry_attempts: 3
+  storage_retry_backoff_ms: 100
