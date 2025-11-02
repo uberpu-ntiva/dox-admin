@@ -1,0 +1,22 @@
+# DOX Validation Service Dependencies
+Flask==2.3.0
+Flask-CORS==4.0.0
+requests==2.31.0
+redis==4.6.0
+psycopg2-binary==2.9.7
+python-dotenv==1.0.0
+Werkzeug==2.3.0
+
+# Optional dependencies for enhanced functionality
+try:
+    pyclamd
+except ImportError:
+    pass  # Will be installed separately if available
+
+try:
+    python-magic
+except ImportError:
+    pass  # Will be installed separately if available
+
+# For production deployment
+gunicorn==21.2.0
