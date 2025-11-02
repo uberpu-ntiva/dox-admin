@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "team_name": "Signing",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z",
+    "last_updated": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Signing",
+    "lead_agent": "Agent-Signing-Lead",
+    "members": ["Agent-Signing-Lead", "Agent-ESig-Dev", "Agent-Webhook-Dev", "Agent-Returns-Dev"],
+    "services": ["dox-esig-service", "dox-esig-webhook-listener", "dox-rtns-manual-upload"],
+    "status": "active"
+  },
+  "current_phase": "Week 2 - T06 Porting Critical",
+  "sprint_goal": "Complete T06 porting of dox-rtns-manual-upload, integrate E-signature",
+  "team_blockers": [
+    {
+      "id": "T06_PORTING",
+      "description": "Critical T06 task - port dox-pact-manual-upload to dox-rtns-manual-upload",
+      "priority": "critical",
+      "estimated_effort_days": 3,
+      "status": "ready_to_start",
+      "owner": "Agent-Returns-Dev"
+    }
+  ],
+  "external_dependencies": [
+    "dox-core-auth (ready)",
+    "dox-core-store (ready)",
+    "dox-tmpl-service (in development)"
+  ],
+  "services": {
+    "dox-esig-service": {
+      "status": "active",
+      "completion_percent": 70
+    },
+    "dox-esig-webhook-listener": {
+      "status": "active",
+      "completion_percent": 65
+    },
+    "dox-rtns-manual-upload": {
+      "status": "ready_for_porting",
+      "completion_percent": 0,
+      "porting_source": "dox-pact-manual-upload",
+      "t06_task": "critical"
+    }
+  },
+  "test_pass_rate": 68,
+  "critical_path_status": "at_risk - T06 blocker",
+  "next_sync": "2025-11-03T09:00:00Z"
+}
