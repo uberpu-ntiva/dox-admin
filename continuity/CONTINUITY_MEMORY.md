@@ -91,16 +91,16 @@
 
 | Task ID | Title | Service | Priority | Target Week | Status |
 |---------|-------|---------|----------|------------|--------|
-| **T04** | **Fix Playwright E2E Tests** | pdf-recognizer | CRITICAL | W1 | TO DO |
-| **T09** | **Complete Documentation** | pdf-upload | CRITICAL | W1-2 | TO DO |
-| **T05** | **File Validation** | All uploads | CRITICAL | W1-2 | Planned |
+| **T04** | **Fix Playwright E2E Tests** | pdf-recognizer | CRITICAL | W1 | ✅ **COMPLETED** |
+| **T09** | **Complete Documentation** | pdf-upload | CRITICAL | W1-2 | ✅ **COMPLETED** |
+| **T05** | **File Validation** | All uploads | CRITICAL | W1-2 | ✅ **COMPLETED** |
 
 ### 🟡 HIGH PRIORITY (Week 2)
 
 | Task ID | Title | Service | Priority | Target Week | Status |
 |---------|-------|---------|----------|------------|--------|
-| T06 | Port dox-pact-manual-upload | rtns-manual-upload | High | W2 | Planned |
-| T07 | Onboard 7 Teams | All | High | W2-3 | Planned |
+| T06 | Port dox-pact-manual-upload | rtns-manual-upload | High | W2 | ✅ **COMPLETED** |
+| T07 | Onboard 7 Teams | All | High | W2-3 | ✅ **COMPLETED** |
 
 ---
 
