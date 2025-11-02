@@ -1,0 +1,126 @@
+{
+  "metadata": {
+    "file_type": "WORKFLOW_EXECUTION_LOG",
+    "version": "1.0.0",
+    "description": "Audit trail and performance tracking for all workflow executions",
+    "created_timestamp": "2025-11-02T16:45:00Z",
+    "last_updated": "2025-11-02T16:45:00Z",
+    "locking_protocol": "file_lock_30s_timeout",
+    "scope": "Platform-wide workflow tracking"
+  },
+  "executions": [],
+  "summary": {
+    "total_executions": 0,
+    "successful_executions": 0,
+    "failed_executions": 0,
+    "total_duration_seconds": 0,
+    "avg_execution_time_seconds": 0,
+    "workflows_defined": [
+      "process_document_upload",
+      "recognize_template_from_document",
+      "validate_file_for_upload",
+      "sync_team_coordination",
+      "test_service_integration"
+    ],
+    "last_execution_timestamp": null,
+    "execution_tracking_started": "2025-11-02T16:45:00Z"
+  },
+  "workflow_definitions": {
+    "process_document_upload": {
+      "name": "process_document_upload",
+      "service": "All Upload Services",
+      "priority": "high",
+      "version": "1.0.0",
+      "executions_total": 0,
+      "executions_successful": 0,
+      "executions_failed": 0,
+      "avg_duration_seconds": null,
+      "description": "Main workflow for document upload processing"
+    },
+    "recognize_template_from_document": {
+      "name": "recognize_template_from_document",
+      "service": "dox-tmpl-pdf-recognizer",
+      "priority": "high",
+      "version": "1.0.0",
+      "executions_total": 0,
+      "executions_successful": 0,
+      "executions_failed": 0,
+      "avg_duration_seconds": null,
+      "description": "Template recognition workflow for manual documents"
+    },
+    "validate_file_for_upload": {
+      "name": "validate_file_for_upload",
+      "service": "All Upload Services",
+      "priority": "high",
+      "version": "1.0.0",
+      "executions_total": 0,
+      "executions_successful": 0,
+      "executions_failed": 0,
+      "avg_duration_seconds": null,
+      "description": "File validation workflow for all uploads"
+    },
+    "sync_team_coordination": {
+      "name": "sync_team_coordination",
+      "service": "dox-workflow-orchestrator",
+      "priority": "high",
+      "version": "1.0.0",
+      "trigger_type": "schedule",
+      "schedule": "0 9 * * * (Daily 9 AM UTC)",
+      "executions_total": 0,
+      "executions_successful": 0,
+      "executions_failed": 0,
+      "avg_duration_seconds": null,
+      "description": "Daily team coordination synchronization"
+    },
+    "test_service_integration": {
+      "name": "test_service_integration",
+      "service": "dox-workflow-orchestrator",
+      "priority": "high",
+      "version": "1.0.0",
+      "trigger_type": "cascade",
+      "executions_total": 0,
+      "executions_successful": 0,
+      "executions_failed": 0,
+      "avg_duration_seconds": null,
+      "description": "Service integration testing workflow"
+    }
+  },
+  "performance_metrics": {
+    "p50_duration_seconds": null,
+    "p95_duration_seconds": null,
+    "p99_duration_seconds": null,
+    "max_execution_seconds": null,
+    "min_execution_seconds": null,
+    "success_rate_percent": null,
+    "average_steps_per_execution": null,
+    "most_common_failure_step": null,
+    "slowest_workflow": null,
+    "fastest_workflow": null
+  },
+  "index_by_service": {
+    "dox-tmpl-pdf-recognizer": [],
+    "dox-tmpl-pdf-upload": [],
+    "dox-pact-manual-upload": [],
+    "dox-rtns-manual-upload": [],
+    "dox-workflow-orchestrator": [],
+    "dox-validation-service": [],
+    "dox-core-store": [],
+    "dox-core-auth": []
+  },
+  "index_by_workflow": {
+    "process_document_upload": [],
+    "recognize_template_from_document": [],
+    "validate_file_for_upload": [],
+    "sync_team_coordination": [],
+    "test_service_integration": []
+  },
+  "index_by_status": {
+    "success": [],
+    "failed": [],
+    "running": [],
+    "cancelled": [],
+    "waiting_for_human": [],
+    "escalated": []
+  },
+  "recent_executions": []
+}
