@@ -1,0 +1,202 @@
+name: sync_team_coordination
+service: dox-workflow-orchestrator (Supervisor)
+version: "1.0.0"
+description: |
+  Daily team coordination synchronization workflow. Aggregates status from all
+  20 services, analyzes cross-team dependencies, identifies blockers, updates
+  team memory banks with current status, and publishes coordination events.
+  Runs daily at 9 AM with 7 teams synchronized in parallel.
+priority: high
+
+trigger:
+  type: schedule
+  source: "0 9 * * * (Daily 9 AM UTC)"
+
+conditions:
+  - type: service_ready
+    check: "dox-workflow-orchestrator health == healthy"
+
+steps:
+  - name: Read All Service Status
+    action: custom_logic
+    params:
+      logic: "aggregate_service_status()"
+      reads:
+        - file: SERVICE_*.json (20 files)
+        - fields:
+            - completion_percentage
+            - assigned_agents
+            - current_tasks
+            - blockers_count
+            - last_status_update
+      aggregates_by: team_ownership
+    on_success: Analyze Dependencies
+    on_failure: retry_logic
+
+  - name: Analyze Dependencies
+    action: custom_logic
+    params:
+      logic: "analyze_cross_team_dependencies(service_status)"
+      for_each_team:
+        - identify_services_owned
+        - identify_blocking_services
+        - identify_services_blocked_by_others
+        - build_dependency_matrix
+      returns: dependency_graph_per_team
+    on_success: Identify Blockers
+    on_failure: skip_step
+
+  - name: Identify Blockers
+    action: custom_logic
+    params:
+      logic: "identify_active_blockers()"
+      scans:
+        - file: BLOCKING_ISSUES.json
+        - fields:
+            - issue_id
+            - severity
+            - service
+            - assigned_team
+            - created_timestamp
+            - age_hours
+      calculates:
+        - blocker_age_hours
+        - blocker_per_team
+        - critical_vs_normal_ratio
+      returns: blocker_analysis
+    on_success: Update Team Memory Banks
+    on_failure: skip_step
+
+  - name: Update Team Memory Banks
+    action: custom_logic
+    params:
+      logic: "update_team_memory_banks_parallel()"
+      for_each_team:
+        - write_to: TEAM_[Infrastructure|Document|Signing|Activation|Data|Frontend|Automation].json
+        - update_fields:
+            - current_phase: "{phase_name}"
+            - sprint_goal: "{goal_if_sprint_active}"
+            - team_blockers: "{blocker_list_for_team}"
+            - external_dependencies: "{list_of_waiting_on}"
+            - test_pass_rate: "{percentage}"
+            - deployment_status: "{status}"
+            - last_update: "{ISO8601}"
+        - atomic_writes: true
+    on_success: Publish Coordination Summary
+    on_failure: escalate
+
+  - name: Publish Coordination Summary
+    action: update_memory
+    params:
+      file: SUPERVISOR.json
+      update: |
+        {
+          timestamp: ISO8601,
+          overall_progress_percent: {aggregate},
+          services_total: 20,
+          services_on_track: {count},
+          services_at_risk: {count},
+          blockers_count: {count},
+          critical_blockers: {count},
+          teams_on_track: {
+            Infrastructure: {bool},
+            Document: {bool},
+            Signing: {bool},
+            Activation: {bool},
+            Data: {bool},
+            Frontend: {bool},
+            Automation: {bool}
+          },
+          critical_alerts: {list}
+        }
+    on_success: Emit Events for Teams
+    on_failure: escalate
+
+  - name: Emit Events for Teams
+    action: publish_event
+    params:
+      event_system: redis_pub_sub
+      events:
+        - event_type: team_update_ready
+          for_each_team: true
+          message: "New coordination data available, check TEAM_[name].json"
+        - event_type: blocker_escalation
+          condition: "critical_blockers > 0"
+          message: "Critical blocker requires team attention"
+        - event_type: dependency_ready
+          condition: "external_dependency_completed"
+          message: "Service you were waiting on is ready"
+    on_success: Log Coordination Run
+    on_failure: skip_step
+
+  - name: Log Coordination Run
+    action: update_memory
+    params:
+      file: WORKFLOW_EXECUTION_LOG.json
+      update: |
+        {
+          entry: {
+            workflow_id: {UUID},
+            workflow_name: sync_team_coordination,
+            trigger_type: schedule,
+            start_time: {ISO8601},
+            end_time: {ISO8601},
+            status: success,
+            steps_executed: 8,
+            service: dox-workflow-orchestrator,
+            teams_updated: 7,
+            services_scanned: 20,
+            blockers_identified: {count},
+            events_published: {count}
+          }
+        }
+    on_success: workflow_complete
+    on_failure: skip_step
+
+error_handling:
+  retry_logic: "Retry up to 3 times with exponential backoff (100ms, 300ms, 900ms)"
+  skip_step: "Continue to next step, log warning to WORKFLOW_EXECUTION_LOG"
+  escalate: "Mark workflow failure in SUPERVISOR.json, notify admin"
+
+memory_bank_updates:
+  - file: SUPERVISOR.json
+    update:
+      coordination_sync_run:
+        timestamp: "{ISO8601}"
+        overall_progress: "{percent}"
+        services_on_track: "{count}"
+        blockers: "{count}"
+        teams_status: "{map}"
+      last_coordination_sync: "{ISO8601}"
+      next_coordination_sync: "{ISO8601 + 24h}"
+  - file: TEAM_*.json (for each team)
+    update:
+      current_phase: "{phase}"
+      team_blockers: "{list}"
+      external_dependencies: "{list}"
+      test_pass_rate: "{percent}"
+      deployment_status: "{status}"
+      last_sync: "{ISO8601}"
+  - file: WORKFLOW_EXECUTION_LOG.json
+    update:
+      entry:
+        workflow_id: "{UUID}"
+        workflow_name: sync_team_coordination
+        start_time: "{ISO8601}"
+        end_time: "{ISO8601}"
+        status: success
+        teams_updated: 7
+        services_scanned: 20
+        blockers_identified: "{count}"
+
+configuration:
+  schedule: "0 9 * * *"
+  schedule_description: "Daily at 9 AM UTC"
+  teams_count: 7
+  services_count: 20
+  retry_attempts: 3
+  retry_backoff_ms_base: 100
+  retry_backoff_strategy: exponential
+  file_locking_timeout_seconds: 30
+  atomic_write_enabled: true
+  max_concurrent_updates: 7
