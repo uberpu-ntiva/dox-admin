@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "team_name": "Frontend",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Frontend",
+    "members": ["Agent-Frontend-Lead", "Agent-Gateway-Dev"],
+    "services": ["dox-gtwy-main"],
+    "status": "planning"
+  },
+  "current_phase": "Week 2 Planning",
+  "sprint_goal": "API gateway operational, dashboard functional",
+  "test_pass_rate": 0,
+  "deployment_status": "planning",
+  "critical_path_status": "coordinating",
+  "next_sync": "2025-11-03T09:00:00Z"
+}

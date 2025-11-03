@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "team_name": "Document",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z",
+    "last_updated": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Document",
+    "lead_agent": "Agent-Document-Lead",
+    "members": ["Agent-Document-Lead", "Agent-Template-Dev", "Agent-Field-Dev"],
+    "services": ["dox-tmpl-service", "dox-tmpl-field-mapper"],
+    "status": "active"
+  },
+  "current_phase": "Week 2 Development",
+  "sprint_goal": "Template management API operational, field extraction working",
+  "team_blockers": [
+    {
+      "id": "AUTH_INTEGRATION",
+      "description": "Waiting for dox-core-auth stabilization",
+      "priority": "high",
+      "blocked_by_team": "Infrastructure",
+      "expected_resolution": "2025-11-02T18:00:00Z"
+    }
+  ],
+  "external_dependencies": [
+    "dox-core-auth (must be stable)",
+    "dox-core-store (storage for templates)",
+    "Infrastructure Team readiness"
+  ],
+  "services": {
+    "dox-tmpl-service": {
+      "status": "in_development",
+      "completion_percent": 60,
+      "assigned_agents": ["Agent-Template-Dev"],
+      "current_tasks": [
+        "Template CRUD API",
+        "Template versioning",
+        "Field schema definition"
+      ],
+      "test_pass_rate": 75
+    },
+    "dox-tmpl-field-mapper": {
+      "status": "in_development",
+      "completion_percent": 50,
+      "assigned_agents": ["Agent-Field-Dev"],
+      "current_tasks": [
+        "Field extraction algorithm",
+        "OCR integration",
+        "Confidence scoring"
+      ],
+      "test_pass_rate": 70
+    }
+  },
+  "test_pass_rate": 72,
+  "deployment_status": "development",
+  "critical_path_status": "at_risk - blocked",
+  "cross_team_status": {
+    "Infrastructure": "needed",
+    "Signing": "consumer_waiting"
+  },
+  "recognition_accuracy": {
+    "total_recognitions": 0,
+    "auto_accepted": 0,
+    "human_approved": 0,
+    "rejected": 0
+  },
+  "next_sync": "2025-11-03T09:00:00Z",
+  "notes": "Team ready to proceed once Infrastructure auth service is stable. Expected unblock by 2025-11-02 18:00 UTC."
+}

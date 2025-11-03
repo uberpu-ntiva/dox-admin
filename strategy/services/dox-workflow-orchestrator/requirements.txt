@@ -1,0 +1,10 @@
+# DOX Workflow Orchestrator Dependencies
+Flask==2.3.0
+Flask-CORS==4.0.0
+requests==2.31.0
+redis==4.6.0
+psycopg2-binary==2.9.7
+PyYAML==6.0.1
+python-dotenv==1.0.0
+gunicorn==21.2.0
+jsonschema==4.19.0
