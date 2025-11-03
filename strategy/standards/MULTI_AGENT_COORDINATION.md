@@ -42,8 +42,11 @@ Each agent follows this lifecycle:
 4. WORK → Implement features/fixes
 5. TEST → Run tests, verify quality
 6. COMMIT → Push changes to git
-7. SHUTDOWN → Update status as done
+7. UPDATE_CONTINUITY → Update continuity memory (REQUIRED)
+8. SHUTDOWN → Update status as done
 ```
+
+**NEW: Continuity Update Requirement** - All agents MUST update `/dox-admin/continuity/CONTINUITY_MEMORY.md` after completing significant work to ensure proper session-to-session handoff.
 
 ---
 
