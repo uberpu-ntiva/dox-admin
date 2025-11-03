@@ -372,38 +372,40 @@ OVERALL PROGRESS:      ~15% complete  🟡 Infrastructure ready
 3. Track blockers: `BLOCKING_ISSUES.json`
 4. Coordinate teams: All `TEAM_*.json` files
 
-### ⏳ Week 2 Tasks (From Consolidated Planning)
+### ⏳ IMMEDIATE NEXT STEPS (Updated 2025-11-03)
 
-**High Priority**:
-1. [ ] **T04: Fix Playwright E2E Tests** (3-5 days)
-   - Service: pdf-recognizer
-   - Issue: MDL file input incompatibility
-   - Solution: Replace with vanilla HTML
-   - Blocker: Affects all frontend work
-   - Plan: `planning/dox-tmpl-pdf-recognizer-PLAN.md` (search T04)
+**Infrastructure-First Path Recommended** (2-3 weeks):
+1. [ ] **Deploy Azure Infrastructure** (3-5 days)
+   - Follow `infrastructure/AZURE_SETUP.md`
+   - MSSQL database, Redis cache, Azure Storage
+   - Configure connection strings and test connectivity
 
-2. [ ] **T09: Complete Documentation** (2-3 days)
-   - Service: pdf-upload
-   - Tasks: API docs, OpenAPI spec, architecture
-   - Blocker: Phase 2 integration
-   - Plan: `planning/dox-tmpl-pdf-upload-PLAN.md` (search T09)
+2. [ ] **Complete dox-core-auth** (2-3 days)
+   - Add authentication endpoints to existing JWT foundation
+   - Implement demo users (admin, user1, user2)
+   - Docker deployment and testing
 
-3. [ ] **T05: File Validation** (2-3 days)
-   - Scope: All file uploads
-   - Tasks: Size, MIME, virus scan, rate limit
-   - Concurrent with T04 & T09
-   - Plan: `planning/dox-tmpl-pdf-recognizer-PLAN.md` (search T04B)
+3. [ ] **Test Integration** (2-3 days)
+   - Deploy dox-tmpl-pdf-upload with real infrastructure
+   - Test authentication flow with dox-core-auth
+   - Verify file uploads to Azure Storage
+   - Test MCP server integration
 
-4. [ ] **T06: Port dox-pact-manual-upload** (3-5 days)
-   - Target: dox-rtns-manual-upload
-   - Guide: `REPO_MAPPING.md` (detailed 5-step process)
-   - Template: `SERVICE_TEMPLATE/`
-   - Checklist: `SERVICE_TEMPLATE/CHECKLIST.md`
+4. [ ] **Continue Document Services** (5-7 days)
+   - Complete dox-tmpl-service implementation
+   - Complete dox-tmpl-field-mapper implementation
+   - End-to-end document workflow testing
 
-5. [ ] **T07: Onboard 7 Teams** (2-3 days)
-   - Tasks: Create team plans, assign services
-   - Activate coordination
-   - Initialize memory banks per team
+**Alternative Quick Demo Path** (1 week):
+1. Deploy services locally with fake data
+2. Demo document upload and AI analysis
+3. Skip infrastructure deployment temporarily
+
+**Critical Path Items**:
+- Infrastructure deployment (MSSQL, Redis, Azure Storage)
+- Complete authentication service
+- End-to-end testing of existing services
+- Complete remaining document team services
 
 ---
 
