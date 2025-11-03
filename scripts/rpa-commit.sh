@@ -363,6 +363,279 @@ quick_commit() {
     print_success "Quick commit completed!"
 }
 
+# Function to scan all repositories
+scan_repositories() {
+    print_step "Scanning workspace for repositories..."
+
+    local repos=()
+
+    # Find all directories with .git
+    while IFS= read -r repo_dir; do
+        local repo_name=$(basename "$repo_dir")
+        repos+=("$repo_name:$repo_dir")
+    done < <(find "$WORKSPACE_ROOT" -maxdepth 2 -name ".git" -type d | sed 's/\.git$//' | grep -v "/\.")
+
+    echo "${repos[@]}"
+}
+
+# Function to check if repository has changes
+repo_has_changes() {
+    local repo_dir=$1
+    cd "$repo_dir" || return 1
+
+    # Check for uncommitted changes
+    if [ -n "$(git status --porcelain)" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# Function to check if repository is ahead of remote
+repo_is_ahead() {
+    local repo_dir=$1
+    cd "$repo_dir" || return 1
+
+    # Get current branch
+    local branch=$(git branch --show-current 2>/dev/null)
+    if [ -z "$branch" ]; then
+        return 1
+    fi
+
+    # Check if branch has remote tracking
+    local remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null)
+    if [ -z "$remote_branch" ]; then
+        return 1
+    fi
+
+    # Check if ahead
+    local ahead=$(git rev-list --count "$remote_branch"..HEAD 2>/dev/null || echo "0")
+    if [ "$ahead" -gt 0 ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# Function to get repository status
+get_repo_status() {
+    local repo_dir=$1
+    local repo_name=$(basename "$repo_dir")
+
+    cd "$repo_dir" || return
+
+    local branch=$(git branch --show-current 2>/dev/null || echo "detached")
+    local uncommitted=$(git status --porcelain | wc -l)
+    local ahead="0"
+
+    # Check if ahead of remote
+    if git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1; then
+        local remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+        ahead=$(git rev-list --count "$remote_branch"..HEAD 2>/dev/null || echo "0")
+    fi
+
+    echo "$repo_name|$branch|$uncommitted|$ahead"
+}
+
+# Multi-repository commit mode
+multi_repo_commit() {
+    local description=$1
+    local auto_push=${2:-false}
+
+    print_step "=== Multi-Repository RPA Commit ==="
+    echo ""
+
+    if [ -z "$description" ]; then
+        print_error "Description required for multi-repo commit"
+        echo "Usage: $0 multi \"Your commit description\" [--push]"
+        exit 1
+    fi
+
+    # Scan for repositories with changes
+    print_info "Scanning for repositories with changes..."
+    echo ""
+
+    local repos_to_commit=()
+    local all_repos=$(scan_repositories)
+
+    for repo_entry in $all_repos; do
+        IFS=':' read -r repo_name repo_dir <<< "$repo_entry"
+
+        if repo_has_changes "$repo_dir"; then
+            repos_to_commit+=("$repo_name:$repo_dir")
+            local status=$(get_repo_status "$repo_dir")
+            IFS='|' read -r name branch uncommitted ahead <<< "$status"
+            print_success "$name (branch: $branch, uncommitted: $uncommitted, ahead: $ahead)"
+        fi
+    done
+
+    if [ ${#repos_to_commit[@]} -eq 0 ]; then
+        print_info "No repositories with uncommitted changes found"
+        exit 0
+    fi
+
+    echo ""
+    print_step "Found ${#repos_to_commit[@]} repository(ies) with changes"
+    echo ""
+
+    # Confirm
+    echo -ne "${YELLOW}Commit to all ${#repos_to_commit[@]} repositories?${NC} [y/N]: "
+    read confirm
+
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        print_warning "Multi-repo commit cancelled"
+        exit 0
+    fi
+
+    echo ""
+
+    # Process each repository
+    local success_count=0
+    local fail_count=0
+
+    for repo_entry in "${repos_to_commit[@]}"; do
+        IFS=':' read -r repo_name repo_dir <<< "$repo_entry"
+
+        print_step "Processing: $repo_name"
+        cd "$repo_dir" || continue
+
+        local current_branch=$(git branch --show-current)
+        print_info "Current branch: $current_branch"
+
+        # Auto-determine commit type and service
+        local commit_type=$(determine_commit_type)
+        local service=$(determine_service)
+
+        print_info "Auto-detected: $commit_type($service)"
+
+        # Generate commit message
+        local commit_message=$(generate_commit_message "$commit_type" "$service" "$description")
+
+        # Stage changes
+        git add -A
+
+        # Run pre-commit checks
+        if ! run_pre_commit_checks; then
+            print_error "$repo_name: Pre-commit checks failed, skipping"
+            ((fail_count++))
+            continue
+        fi
+
+        # Create commit
+        if echo "$commit_message" | git commit -F - > /dev/null 2>&1; then
+            print_success "$repo_name: Commit created"
+            ((success_count++))
+
+            # Push if requested
+            if [ "$auto_push" = "true" ]; then
+                print_info "$repo_name: Pushing to remote..."
+                if git push origin "$current_branch" > /dev/null 2>&1; then
+                    print_success "$repo_name: Pushed to remote"
+                else
+                    print_warning "$repo_name: Push failed (may need to set upstream)"
+                fi
+            fi
+        else
+            print_error "$repo_name: Commit failed"
+            ((fail_count++))
+        fi
+
+        echo ""
+    done
+
+    # Summary
+    print_step "Multi-Repo Commit Summary:"
+    echo -e "${GREEN}Success:${NC} $success_count"
+    echo -e "${RED}Failed:${NC} $fail_count"
+    echo ""
+
+    if [ $success_count -gt 0 ]; then
+        if [ "$auto_push" != "true" ]; then
+            print_info "To push all changes, run:"
+            echo -e "${BLUE}  $0 push-all${NC}"
+        fi
+    fi
+}
+
+# Push all repositories that are ahead
+push_all_ahead() {
+    print_step "=== Push All Ahead Repositories ==="
+    echo ""
+
+    local all_repos=$(scan_repositories)
+    local pushed_count=0
+
+    for repo_entry in $all_repos; do
+        IFS=':' read -r repo_name repo_dir <<< "$repo_entry"
+
+        if repo_is_ahead "$repo_dir"; then
+            cd "$repo_dir" || continue
+            local branch=$(git branch --show-current)
+
+            print_info "Pushing $repo_name ($branch)..."
+
+            if git push origin "$branch" 2>&1; then
+                print_success "$repo_name: Pushed successfully"
+                ((pushed_count++))
+            else
+                print_error "$repo_name: Push failed"
+            fi
+            echo ""
+        fi
+    done
+
+    if [ $pushed_count -eq 0 ]; then
+        print_info "No repositories ahead of remote"
+    else
+        print_success "Pushed $pushed_count repository(ies)"
+    fi
+}
+
+# Scan and show status of all repositories
+scan_all_status() {
+    print_step "=== Repository Status Summary ==="
+    echo ""
+
+    printf "%-30s %-20s %-15s %-10s\n" "REPOSITORY" "BRANCH" "UNCOMMITTED" "AHEAD"
+    printf "%-30s %-20s %-15s %-10s\n" "----------" "------" "-----------" "-----"
+
+    local all_repos=$(scan_repositories)
+    local has_changes=false
+
+    for repo_entry in $all_repos; do
+        IFS=':' read -r repo_name repo_dir <<< "$repo_entry"
+
+        local status=$(get_repo_status "$repo_dir")
+        IFS='|' read -r name branch uncommitted ahead <<< "$status"
+
+        # Color code if has changes
+        if [ "$uncommitted" -gt 0 ] || [ "$ahead" -gt 0 ]; then
+            echo -ne "${YELLOW}"
+            has_changes=true
+        fi
+
+        printf "%-30s %-20s %-15s %-10s\n" "$name" "$branch" "$uncommitted" "$ahead"
+
+        if [ "$uncommitted" -gt 0 ] || [ "$ahead" -gt 0 ]; then
+            echo -ne "${NC}"
+        fi
+    done
+
+    echo ""
+
+    if [ "$has_changes" = true ]; then
+        print_info "Yellow entries have uncommitted changes or unpushed commits"
+        echo ""
+        print_info "To commit all changes:"
+        echo -e "  ${BLUE}$0 multi \"Your commit message\"${NC}"
+        echo ""
+        print_info "To push all ahead repositories:"
+        echo -e "  ${BLUE}$0 push-all${NC}"
+    else
+        print_success "All repositories are clean and up-to-date"
+    fi
+}
+
 # Function to show help
 show_help() {
     cat << EOF
@@ -373,15 +646,23 @@ Automated commit process following RPA standards and best practices.
 Usage: $0 [MODE] [OPTIONS]
 
 Modes:
-    interactive     Interactive mode - prompts for commit details (default)
-    quick "msg"     Quick mode - auto-detect type/service, use provided message
-    check           Check if there are changes to commit
-    help            Show this help message
+    interactive       Interactive mode - prompts for commit details (default)
+    quick "msg"       Quick mode - auto-detect type/service, use provided message
+    multi "msg"       Multi-repo mode - commit to all repos with changes
+    multi "msg" --push Multi-repo mode with automatic push
+    scan              Scan all repositories and show status
+    push-all          Push all repositories that are ahead of remote
+    check             Check if there are changes to commit
+    help              Show this help message
 
 Examples:
     $0                                          # Interactive mode
     $0 interactive                              # Interactive mode (explicit)
     $0 quick "Add PDF validation to upload"     # Quick commit with message
+    $0 multi "Implement new feature"            # Commit to all repos with changes
+    $0 multi "Fix bug" --push                   # Commit and push to all repos
+    $0 scan                                     # Show status of all repositories
+    $0 push-all                                 # Push all repos ahead of remote
     $0 check                                    # Check for uncommitted changes
 
 Features:
