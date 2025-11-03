@@ -147,8 +147,9 @@
 | Task ID | Title | Service | Priority | Target Week | Status |
 |---------|-------|---------|----------|------------|--------|
 | **T04** | **Fix Playwright E2E Tests** | pdf-recognizer | CRITICAL | W1 | TO DO |
-| **T09** | **Complete Documentation** | pdf-upload | CRITICAL | W1-2 | TO DO |
-| **T05** | **File Validation** | All uploads | CRITICAL | W1-2 | Planned |
+| **T09** | **Complete Documentation** | pdf-upload | CRITICAL | W1-2 | ✅ COMPLETE |
+| **T05** | **File Validation** | All uploads | CRITICAL | W1-2 | ✅ COMPLETE |
+| **T10** | **MCP Server Implementation** | dox-mcp-server | HIGH | W2 | ✅ COMPLETE |
 
 ### 🟡 HIGH PRIORITY (Week 2)
 
