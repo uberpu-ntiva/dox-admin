@@ -700,24 +700,49 @@ EOF
 main() {
     local mode=${1:-interactive}
 
-    # Check git repository
-    check_git_repo
-
-    # Check for changes
-    if ! check_uncommitted_changes; then
-        if [ "$mode" != "check" ]; then
-            exit 0
-        fi
-    fi
-
     case "$mode" in
+        scan)
+            # Scan mode doesn't need git repo check
+            scan_all_status
+            ;;
+        push-all)
+            # Push all repos ahead of remote
+            push_all_ahead
+            ;;
+        multi)
+            # Multi-repo mode
+            local push_flag="false"
+            if [ "$3" = "--push" ] || [ "$3" = "-p" ]; then
+                push_flag="true"
+            fi
+            multi_repo_commit "$2" "$push_flag"
+            ;;
         interactive|"")
+            # Check git repository for single-repo modes
+            check_git_repo
+
+            # Check for changes
+            if ! check_uncommitted_changes; then
+                exit 0
+            fi
+
             interactive_commit
             ;;
         quick)
+            # Check git repository for single-repo modes
+            check_git_repo
+
+            # Check for changes
+            if ! check_uncommitted_changes; then
+                exit 0
+            fi
+
             quick_commit "$2"
             ;;
         check)
+            # Check git repository
+            check_git_repo
+
             check_uncommitted_changes
             if [ $? -eq 0 ]; then
                 show_git_status
