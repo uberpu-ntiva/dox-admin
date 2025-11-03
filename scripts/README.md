@@ -157,6 +157,111 @@ $ ./rpa-commit.sh quick "Implement MCP server tools"
 
 ---
 
+### Multi-Repository Workflows
+
+The enhanced RPA commit script now supports working across multiple repositories simultaneously, detecting which repos have changes or are ahead of remote.
+
+**Scan all repositories**:
+```bash
+$ ./rpa-commit.sh scan
+
+[STEP] === Repository Status Summary ===
+
+REPOSITORY                     BRANCH               UNCOMMITTED     AHEAD
+----------                     ------               -----------     -----
+dox-admin                      main                 3               0
+dox-tmpl-pdf-upload           main                 8               2
+dox-mcp-server                main                 5               1
+dox-tmpl-pdf-recognizer       main                 0               0
+
+[INFO] Yellow entries have uncommitted changes or unpushed commits
+
+To commit all changes:
+  ./rpa-commit.sh multi "Your commit message"
+
+To push all ahead repositories:
+  ./rpa-commit.sh push-all
+```
+
+**Commit to all repos with changes**:
+```bash
+$ ./rpa-commit.sh multi "Add validation layer"
+
+[STEP] === Multi-Repository RPA Commit ===
+
+[INFO] Scanning for repositories with changes...
+
+[SUCCESS] dox-admin (branch: main, uncommitted: 3, ahead: 0)
+[SUCCESS] dox-tmpl-pdf-upload (branch: main, uncommitted: 8, ahead: 2)
+[SUCCESS] dox-mcp-server (branch: main, uncommitted: 5, ahead: 1)
+
+[STEP] Found 3 repository(ies) with changes
+
+Commit to all 3 repositories? [y/N]: y
+
+[STEP] Processing: dox-admin
+[INFO] Current branch: main
+[INFO] Auto-detected: chore(dox-admin)
+[SUCCESS] dox-admin: Commit created
+
+[STEP] Processing: dox-tmpl-pdf-upload
+[INFO] Current branch: main
+[INFO] Auto-detected: feat(dox-tmpl-pdf-upload)
+[SUCCESS] dox-tmpl-pdf-upload: Commit created
+
+[STEP] Processing: dox-mcp-server
+[INFO] Current branch: main
+[INFO] Auto-detected: feat(dox-mcp-server)
+[SUCCESS] dox-mcp-server: Commit created
+
+[STEP] Multi-Repo Commit Summary:
+Success: 3
+Failed: 0
+
+[INFO] To push all changes, run:
+  ./rpa-commit.sh push-all
+```
+
+**Commit and push in one command**:
+```bash
+$ ./rpa-commit.sh multi "Fix authentication bug" --push
+
+# Commits to all repos with changes AND pushes to remote
+```
+
+**Push all repositories ahead of remote**:
+```bash
+$ ./rpa-commit.sh push-all
+
+[STEP] === Push All Ahead Repositories ===
+
+[INFO] Pushing dox-tmpl-pdf-upload (main)...
+[SUCCESS] dox-tmpl-pdf-upload: Pushed successfully
+
+[INFO] Pushing dox-mcp-server (main)...
+[SUCCESS] dox-mcp-server: Pushed successfully
+
+[SUCCESS] Pushed 2 repository(ies)
+```
+
+**How it works**:
+
+1. **Scan**: Automatically discovers all git repositories in workspace
+2. **Detect**: Identifies repos with uncommitted changes or unpushed commits
+3. **Branch-aware**: Uses current branch in each repository (no branch switching)
+4. **Auto-commit**: Creates commits with auto-detected type and service
+5. **Pre-commit checks**: Runs Python syntax validation for each repo
+6. **Push**: Optionally pushes all commits to remote after committing
+
+**Use cases**:
+- Changes span multiple services (common in microservices)
+- Implementing cross-cutting features (logging, monitoring, security)
+- Batch updates (dependency upgrades, config changes)
+- End-of-day commits across all work
+- CI/CD workflow integration
+
+---
+
 ## Setup Instructions
 
 ### First Time Setup
