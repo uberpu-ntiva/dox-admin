@@ -511,6 +511,145 @@ alert_supervisor(f"Blocker in {service}: {blocker_title}")
 
 ---
 
+## Continuity Memory Update Protocol (REQUIRED)
+
+### Purpose
+
+The continuity memory system ensures that implementation context is preserved across sessions. When the implementation context limit is reached or a session ends, the next session needs complete information about what was done.
+
+### When to Update Continuity Memory
+
+Agents **MUST** update `/dox-admin/continuity/CONTINUITY_MEMORY.md` when:
+
+1. **Completing a major feature** - Service implementation, new endpoint, major refactor
+2. **Completing a sprint milestone** - End of sprint, phase completion
+3. **Before long pauses** - End of work session, before context switch
+4. **After architectural decisions** - Technology choices, design patterns adopted
+5. **When creating new services** - New repositories, new microservices
+6. **After fixing critical bugs** - Important fixes that affect other services
+
+### What to Include in Continuity Updates
+
+```markdown
+## What Was Implemented (Session N - YYYY-MM-DD)
+
+### System/Service Name
+
+**Location**: `/path/to/service/`
+
+**Components Implemented**:
+- ✅ Component 1 (file path)
+- ✅ Component 2 (file path)
+- ✅ Component 3 (file path)
+
+**Key Features Delivered**:
+- Feature 1 description
+- Feature 2 description
+- Feature 3 description
+
+**Architectural Decisions**:
+- Decision 1: Why it was made
+- Decision 2: Trade-offs considered
+
+**Dependencies Added**:
+- Library 1: Purpose
+- Library 2: Purpose
+
+**Known Issues/Incomplete Work**:
+- Issue 1: What needs to be done
+- Issue 2: Blocker or limitation
+
+**Total Files Created/Modified**: N files
+```
+
+### Update Process
+
+```python
+# 1. Read current continuity memory
+continuity_doc = read_file('/dox-admin/continuity/CONTINUITY_MEMORY.md')
+
+# 2. Add new session section after Executive Summary
+new_section = f"""
+## What Was Implemented (Session {session_num} - {date})
+
+### {system_name}
+
+**Location**: `{service_path}`
+
+**Components Implemented**:
+{component_list}
+
+**Key Features Delivered**:
+{feature_list}
+
+**Total Files Created**: {file_count} files
+"""
+
+# 3. Update Executive Summary with latest status
+update_executive_summary(latest_completion_info)
+
+# 4. Update task status table (mark completed items)
+update_task_status_table(completed_tasks)
+
+# 5. Update repository status (if new repos added)
+update_repository_list(new_repos)
+
+# 6. Write back atomically
+write_file_atomic('/dox-admin/continuity/CONTINUITY_MEMORY.md', updated_doc)
+```
+
+### Continuity Update Checklist
+
+Before completing work, verify continuity update includes:
+
+- [ ] Session date and number
+- [ ] System/service name and location
+- [ ] List of files created/modified
+- [ ] Key features delivered
+- [ ] Architectural decisions made
+- [ ] Dependencies added/changed
+- [ ] Known issues or incomplete work
+- [ ] Updated Executive Summary
+- [ ] Updated task status table
+- [ ] Updated repository list
+
+### Example Continuity Update
+
+```markdown
+## What Was Implemented (Session 2 - 2025-11-03)
+
+### System 3: Document Team Services (Phase 2)
+
+**Location**: `/dox-tmpl-pdf-upload/` and `/dox-mcp-server/`
+
+**Service 1: dox-tmpl-pdf-upload** (COMPLETED):
+- ✅ FastAPI application with async/await support (app/main.py)
+- ✅ Comprehensive file validation pipeline (app/services/validation.py)
+- ✅ Azure Blob Storage integration (app/services/storage.py)
+- ✅ Complete API endpoints for CRUD operations
+
+**Service 2: dox-mcp-server** (COMPLETED):
+- ✅ FastMCP server implementation (app/main.py)
+- ✅ MCP Tools: template_upload, template_search, template_validate, template_info
+- ✅ MCP Prompts: analyze_template, field_detection
+- ✅ MCP Resources: template_list, validation_report
+
+**Key Features Delivered**:
+- Multi-layer security validation
+- AI-powered field detection
+- Production-ready Docker configurations
+
+**Total Files Created**: 40+ files
+```
+
+### Enforcement
+
+- **Mandatory**: All agents must update continuity before marking work as complete
+- **Verification**: Supervisor agent checks for continuity updates in review
+- **Consequence**: Work without continuity updates is considered incomplete
+
+---
+
 ## Communication Protocol
 
 ### Intra-Team Communication
