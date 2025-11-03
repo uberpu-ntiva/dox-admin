@@ -162,15 +162,14 @@
 
 ## Current Repositories in Workspace
 
-**Present** (3):
+**Present and Implemented** (5):
 1. ✅ `dox-tmpl-pdf-recognizer` - Fully documented, v1.0.0
-2. ✅ `dox-tmpl-pdf-upload` - Minimal docs (needs T09)
-3. ✅ `dox-admin` - Governance hub (new strategy/ added)
+2. ✅ `dox-tmpl-pdf-upload` - **Fully implemented FastAPI service** (T09 complete - 2025-11-03)
+3. ✅ `dox-mcp-server` - **Fully implemented MCP server** (T10 complete - 2025-11-03)
+4. ✅ `dox-admin` - Governance hub (strategy/ + continuity/)
+5. ✅ `dox-pact-manual-upload` - Present in workspace
 
-**Not Yet Cloned**:
-- ❌ `dox-pact-manual-upload` - Exists on GitHub, needs to be cloned for porting
-
-**To Be Created** (17):
+**To Be Created** (15):
 - dox-core-store, dox-core-auth
 - dox-tmpl-service, dox-tmpl-field-mapper
 - dox-gtwy-main
