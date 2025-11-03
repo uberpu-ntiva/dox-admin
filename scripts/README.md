@@ -69,6 +69,18 @@ Utility scripts for local development, testing, and automated workflows.
 # Quick commit with auto-detection
 ./rpa-commit.sh quick "Add PDF validation to upload service"
 
+# Multi-repository commit (all repos with changes)
+./rpa-commit.sh multi "Implement new feature"
+
+# Multi-repository commit with auto-push
+./rpa-commit.sh multi "Fix bug across services" --push
+
+# Scan all repositories for changes and status
+./rpa-commit.sh scan
+
+# Push all repositories that are ahead of remote
+./rpa-commit.sh push-all
+
 # Check for uncommitted changes
 ./rpa-commit.sh check
 
