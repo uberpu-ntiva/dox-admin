@@ -1,0 +1,177 @@
+name: validate_file_for_upload
+service: All Upload Services
+version: "1.0.0"
+description: |
+  File validation workflow executed for every upload. Performs 5 sequential
+  validation steps: size check, MIME type validation, virus scanning,
+  rate limiting, and format-specific validation. Uses embedded library
+  (dox-workflow-core) for steps 1-2-5, calls centralized service for steps 3-4.
+priority: high
+
+trigger:
+  type: api_request
+  source: "POST /api/documents/upload (initial step)"
+
+conditions:
+  - type: user_permission
+    check: "User authenticated with valid JWT"
+
+steps:
+  - name: Size Validation
+    action: custom_logic
+    params:
+      logic: "check_file_size(file)"
+      check: "file_size <= 50MB"
+      max_size_bytes: 52428800
+    on_success: MIME Type Validation
+    on_failure: return_400_size_exceeded
+    error_message: "File exceeds maximum size of 50MB (provided: {size_mb}MB)"
+
+  - name: MIME Type Validation
+    action: custom_logic
+    params:
+      logic: "validate_mime_type(file)"
+      checks:
+        - "extension in ALLOWED_EXTENSIONS"
+        - "file_header_mimetype matches extension"
+      allowed_extensions: [pdf, png, jpg, jpeg, tiff, tif]
+      allowed_mimetypes:
+        - application/pdf
+        - image/png
+        - image/jpeg
+        - image/tiff
+    on_success: Virus Scanning
+    on_failure: return_400_invalid_type
+    error_message: "Invalid file type. Allowed: PDF, PNG, JPG, TIFF (provided: {extension})"
+
+  - name: Virus Scanning
+    action: api_call
+    params:
+      service: dox-validation-service
+      method: POST
+      endpoint: /api/validate/scan
+      body: "{file_path, file_hash, file_size}"
+      timeout_seconds: 5
+      async: false
+    on_success: Rate Limiting Check
+    on_failure: virus_detected
+    error_message: "File failed security scan"
+
+  - name: Rate Limiting Check
+    action: api_call
+    params:
+      service: dox-validation-service
+      method: POST
+      endpoint: /api/validate/rate-check
+      body: "{user_id, account_id, time_window: '24h'}"
+      timeout_seconds: 2
+    on_success: Format-Specific Validation
+    on_failure: rate_limit_exceeded
+    error_message: "Upload quota exceeded"
+
+  - name: Format-Specific Validation
+    action: custom_logic
+    params:
+      logic: "validate_format_specific(file, extension)"
+      pdf_checks:
+        - "PDF is valid (not corrupted)"
+        - "PDF is readable (not encrypted)"
+        - "PDF can read first page"
+      image_checks:
+        - "Image dimensions within limits (max 4000x4000 pixels)"
+        - "Image not corrupted"
+        - "Image format parseable"
+    on_success: validation_success
+    on_failure: return_400_invalid_format
+    error_message: "{format} file is invalid or corrupted / Image dimensions exceed limits"
+
+error_handling:
+  return_400_size_exceeded: "Return 400 Bad Request immediately, stop processing"
+  return_400_invalid_type: "Return 400 Bad Request immediately, stop processing"
+  virus_detected: "Return 419 Suspicious Content immediately, log to BLOCKING_ISSUES.json"
+  rate_limit_exceeded: "Return 429 Too Many Requests immediately, suggest retry time"
+  return_400_invalid_format: "Return 400 Bad Request immediately, stop processing"
+  validation_success: "Continue to next workflow step (file storage)"
+
+memory_bank_updates:
+  - file: SERVICE_[service].json
+    update:
+      validation_stats:
+        total_validations: "+1"
+        passed_validations: "+{1 if success else 0}"
+        failed_validations: "+{1 if failure else 0}"
+        size_failures: "+{1 if size_exceeded else 0}"
+        mime_failures: "+{1 if invalid_mime else 0}"
+        virus_detections: "+{1 if virus_detected else 0}"
+        rate_limit_violations: "+{1 if rate_limited else 0}"
+      last_validation_timestamp: "{ISO8601}"
+  - file: BLOCKING_ISSUES.json
+    update:
+      on_virus_detected:
+        issue_id: "{UUID}"
+        severity: critical
+        service: "{service_name}"
+        issue_type: virus_detected
+        file_hash: "{file_hash}"
+        timestamp: "{ISO8601}"
+        assigned_team: Infrastructure
+  - file: WORKFLOW_EXECUTION_LOG.json
+    update:
+      entry:
+        workflow_id: "{UUID}"
+        workflow_name: validate_file_for_upload
+        start_time: "{ISO8601}"
+        end_time: "{ISO8601}"
+        status: "{success|failed}"
+        steps_executed: "{count}"
+        service: "{service_name}"
+        failure_reason: "{step_name_if_failed}"
+
+error_response_format:
+  success: |
+    {
+      "success": true,
+      "file_hash": "{SHA256}",
+      "validation_timestamp": "{ISO8601}"
+    }
+  error: |
+    {
+      "error": "Validation failed",
+      "details": {
+        "type": "file_validation",
+        "rule_violated": "{step_name}",
+        "message": "{error_message}",
+        "provided_value": "{actual_value}",
+        "max_allowed": "{limit_if_applicable}"
+      },
+      "timestamp": "{ISO8601}"
+    }
+
+configuration:
+  file_size_max_mb: 50
+  file_size_max_bytes: 52428800
+  allowed_extensions:
+    - pdf
+    - png
+    - jpg
+    - jpeg
+    - tiff
+    - tif
+  allowed_mimetypes:
+    - application/pdf
+    - image/png
+    - image/jpeg
+    - image/tiff
+  image_max_width: 4000
+  image_max_height: 4000
+  clamav_enabled: true
+  clamav_host: clamav-service
+  clamav_port: 3310
+  clamav_timeout_seconds: 5
+  rate_limit_per_user_per_day: 100
+  rate_limit_per_account_per_day: 500
+  virus_scan_async: false
+  retry_policy:
+    max_attempts: 3
+    backoff_base_ms: 100
+    backoff_strategy: exponential

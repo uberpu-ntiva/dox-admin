@@ -1,0 +1,102 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "DOX Workflow Orchestrator",
+    "tags": ["dox", "workflow", "orchestrator"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Workflow Status Overview",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(workflow_completed_total[5m]))",
+            "legendFormat": "Completed"
+          },
+          {
+            "expr": "sum(rate(workflow_failed_total[5m]))",
+            "legendFormat": "Failed"
+          },
+          {
+            "expr": "sum(rate(workflow_started_total[5m]))",
+            "legendFormat": "Started"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Active Workflows",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "workflow_active_count",
+            "legendFormat": "Active"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Workflow Duration",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(workflow_duration_seconds_bucket[5m]))",
+            "legendFormat": "P50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(workflow_duration_seconds_bucket[5m]))",
+            "legendFormat": "P95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(workflow_duration_seconds_bucket[5m]))",
+            "legendFormat": "P99"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Service Health",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "service_health_status",
+            "legendFormat": "{{service}}"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Redis Connection Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "redis_connected",
+            "legendFormat": "Connected"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Workflow Step Success Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(workflow_step_completed_total{status=\"success\"}[5m]) / rate(workflow_step_completed_total[5m])",
+            "legendFormat": "Success Rate"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s"
+  }
+}

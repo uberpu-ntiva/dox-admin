@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "team_name": "Activation",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Activation",
+    "members": ["Agent-Activation-Lead", "Agent-Activation-Dev", "Agent-Listener-Dev"],
+    "services": ["dox-actv-service", "dox-actv-listener"],
+    "status": "planning"
+  },
+  "current_phase": "Week 2 Planning",
+  "sprint_goal": "Activation service endpoints operational, listener working",
+  "team_blockers": [
+    {
+      "id": "SIGNING_DEPENDENCY",
+      "description": "Waiting for Signing team E-signature integration",
+      "priority": "high",
+      "blocked_by_team": "Signing"
+    }
+  ],
+  "test_pass_rate": 0,
+  "deployment_status": "planning",
+  "critical_path_status": "dependent",
+  "next_sync": "2025-11-03T09:00:00Z"
+}

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  redis-master:
+    image: redis:7-alpine
+    container_name: dox-redis-master
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_master_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - dox-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis-slave:
+    image: redis:7-alpine
+    container_name: dox-redis-slave
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_slave_data:/data
+    command: redis-server --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+    networks:
+      - dox-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: dox-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis-master:6379,redis-slave:6380
+    depends_on:
+      - redis-master
+      - redis-slave
+    networks:
+      - dox-network
+    restart: unless-stopped
+
+volumes:
+  redis_master_data:
+    driver: local
+  redis_slave_data:
+    driver: local
+
+networks:
+  dox-network:
+    driver: bridge
+    external: true

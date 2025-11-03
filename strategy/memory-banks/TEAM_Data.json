@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "team_name": "Data",
+    "version": "1.0.0",
+    "created_timestamp": "2025-11-02T16:50:00Z"
+  },
+  "team_info": {
+    "name": "Data",
+    "members": ["Agent-Data-Lead", "Agent-ETL-Dev", "Agent-Distribution-Dev", "Agent-Analytics-Dev"],
+    "services": ["dox-data-etl-service", "dox-data-distrib-service", "dox-data-aggregation-service"],
+    "status": "planning"
+  },
+  "current_phase": "Week 2 Planning",
+  "sprint_goal": "ETL pipeline operational, distribution working",
+  "team_blockers": [],
+  "test_pass_rate": 0,
+  "deployment_status": "planning",
+  "critical_path_status": "dependent",
+  "next_sync": "2025-11-03T09:00:00Z"
+}
