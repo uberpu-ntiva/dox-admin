@@ -89,6 +89,9 @@ Utility scripts for local development, testing, and automated workflows.
 ```
 
 **Features**:
+- **Multi-repository support**: Commit across all repos with changes at once
+- **Branch detection**: Works with current branch in each repository
+- **Ahead detection**: Identifies repos with unpushed commits
 - Auto-detects commit type (feat/fix/docs/test/chore/refactor)
 - Auto-detects service name from changed files
 - Python syntax validation before commit
@@ -96,6 +99,7 @@ Utility scripts for local development, testing, and automated workflows.
 - Standardized commit message format
 - Compyle attribution in commits
 - Pre-commit checks for code quality
+- Workflow integration ready
 
 **Commit Message Format**:
 ```
