@@ -31,7 +31,7 @@ This document defines the centralized standards and guidelines for Jules AI when
 **Before marking ANY task complete, Jules MUST verify ALL items:**
 
 ### Security ✅
-- [ ] No hardcoded secrets, API keys, or credentials
+- [ ] No hardcoded secrets, API keys, or credentials (use centralized storage)
 - [ ] All user inputs validated and sanitized
 - [ ] SQL injection prevention (parameterized queries)
 - [ ] XSS prevention (sanitized outputs)
@@ -41,6 +41,9 @@ This document defines the centralized standards and guidelines for Jules AI when
 - [ ] HTTPS enforced for sensitive operations
 - [ ] Rate limiting implemented where needed
 - [ ] OWASP Top 10 vulnerabilities addressed
+- [ ] **Key Management**: Use `dox-core-store` for all API keys/secrets
+- [ ] **Service Auth**: Authenticate with service JWT tokens
+- [ ] **No Env Keys**: No API keys in environment files or repositories
 
 ### Code Quality ✅
 - [ ] Follows existing patterns in the codebase
