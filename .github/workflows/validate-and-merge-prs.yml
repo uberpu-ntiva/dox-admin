@@ -13,13 +13,31 @@ jobs:
     strategy:
       matrix:
         include:
+          # - repo: dox-admin
           - repo: dox-tmpl-pdf-upload
-          - repo: dox-mcp-server
-          - repo: dox-core-auth
-          - repo: dox-core-store
-          - repo: dox-tmpl-service
-          - repo: dox-tmpl-field-mapper
           - repo: dox-tmpl-pdf-recognizer
+          - repo: dox-actv-listener
+          - repo: dox-actv-service
+          - repo: dox-auto-lifecycle-service
+          - repo: dox-auto-workflow-engine
+          - repo: dox-batch-assembly
+          - repo: dox-core-auth
+          - repo: dox-core-rec-engine
+          - repo: dox-core-store
+          - repo: dox-data-aggregation-service
+          - repo: dox-data-distrib-service
+          - repo: dox-data-etl-service
+          - repo: dox-esig-service
+          - repo: dox-esig-webhook-listener
+          - repo: dox-gtwy-main
+          - repo: dox-pact-manual-upload
+          - repo: dox-rtns-barcode-matcher
+          - repo: dox-rtns-manual-upload
+          - repo: dox-tmpl-field-mapper
+          - repo: dox-tmpl-service
+          - repo: dox-mcp-server
+          # - repo: jules-mcp
+          # - repo: test-jules
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
