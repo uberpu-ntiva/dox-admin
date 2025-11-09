@@ -270,16 +270,18 @@ services:
 ## Success Criteria
 
 ✅ **Frontend**
-- [ ] No mock data remains
-- [ ] All API calls use real endpoints
+- [x] No mock data remains (verified: 0 instances of Math.random())
+- [x] All API calls use real endpoints (/api/stats, /api/activities, /api/metrics/system)
 - [ ] Real-time WebSocket works
 - [ ] OAuth2 login works
 
 ✅ **Backend**
-- [ ] All services start successfully
+- [x] Gateway proxies requests to dox-admin successfully
+- [x] dox-admin APIs return real data (tested via curl)
+- [x] Frontend can fetch data through gateway (verified)
+- [ ] All 22 microservices start successfully
 - [ ] Service-to-service auth works
-- [ ] Database connections work
-- [ ] API endpoints return real data
+- [ ] Database connections work across all services
 
 ✅ **Dev Environment**
 - [ ] Single docker-compose starts everything
