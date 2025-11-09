@@ -39,18 +39,7 @@
 
 ### ❌ Remaining Blockers for Production
 
-1. **MOCK DATA IN FRONTEND** - MUST REMOVE
-   - Location: `dox-gtwy-main/public/js/pact-admin.js`
-   - Lines 272-286: updateStats() uses random numbers
-   - Lines 332-356: loadRecentActivities() has hardcoded mock activities
-   - Lines 358-373: loadSystemMetrics() uses random numbers for CPU/memory/disk
-
-2. **Missing Backend APIs**
-   - `/api/stats` - Real document/template/workflow/user counts
-   - `/api/activities` - Recent user activities from database
-   - `/api/metrics` - Real system CPU/memory/disk usage
-
-3. **Services Not Running**
+1. **Services Not Running**
    - 22 microservices need to be started
    - Redis not running (needed for caching/rate limiting)
    - PostgreSQL not running (needed for persistence)
