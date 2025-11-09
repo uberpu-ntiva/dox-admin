@@ -241,16 +241,16 @@ services:
 
 ## Action Plan
 
-### Phase 1: Remove Mock Data (Priority 1)
-1. [ ] Update pact-admin.js to remove all mock/random data
-2. [ ] Implement real API endpoints in dox-admin
-3. [ ] Test frontend with real backend data
+### Phase 1: Remove Mock Data (Priority 1) - ✅ COMPLETE
+1. [x] Update pact-admin.js to remove all mock/random data
+2. [x] Implement real API endpoints in dox-admin
+3. [x] Test frontend with real backend data
 
-### Phase 2: Backend APIs (Priority 1)
-1. [ ] Implement /api/stats in dox-admin
-2. [ ] Implement /api/activities in dox-admin
-3. [ ] Implement /api/metrics/system in dox-admin
-4. [ ] Connect to PostgreSQL for real data
+### Phase 2: Backend APIs (Priority 1) - ✅ COMPLETE
+1. [x] Implement /api/stats in dox-admin
+2. [x] Implement /api/activities in dox-admin
+3. [x] Implement /api/metrics/system in dox-admin
+4. [x] Connect to PostgreSQL for real data (using existing dashboard_service)
 
 ### Phase 3: Service Integration (Priority 2)
 1. [ ] Start all 22 microservices
