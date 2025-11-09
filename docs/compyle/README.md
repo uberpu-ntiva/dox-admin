@@ -196,10 +196,10 @@
 
 | Session | Branch | Focus | Status | Deliverables |
 |---------|--------|-------|--------|--------------|
-| 1 | hybrid-impl | Governance & Planning | ✅ Complete | SERVICES_REGISTRY.md, Planning Hub |
-| 2 | hybrid-impl | Document Services | ✅ Complete | dox-tmpl-pdf-upload, dox-mcp-server |
-| 3 | hybrid-impl | AGENTS.md Distribution | 🟡 Partial | 24 AGENTS.md files (2 incomplete) |
-| 4 | hybrid-impl | Phase 3 Completion | ✅ Complete | 2 missing AGENTS.md files |
+| 1 | `compyle/ugly-latest-continuation-hybrid-implementation` | Governance & Planning | ✅ Complete | SERVICES_REGISTRY.md, Planning Hub, 27+ files |
+| 2 | `compyle/ugly-latest-continuation-hybrid-implementation` | Document Services | ✅ Complete | dox-tmpl-pdf-upload, dox-mcp-server (60+ files) |
+| 3 | `compyle/ugly-latest-continuation-hybrid-implementation` | AGENTS.md Distribution | 🟡 Partial | 24 AGENTS.md files (2 incomplete for S4) |
+| 4 | `compyle/ugly-latest-continuation-hybrid-implementation` | Phase 3 Completion | ✅ Complete | 2 missing AGENTS.md files, 100% coverage |
 | 5 | TBD | Phase 4 Priority | ⏳ Pending | TBD based on focus |
 
 ---
