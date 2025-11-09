@@ -291,8 +291,9 @@ services:
 
 ## Next Immediate Actions
 
-1. **FIX MOCK DATA** - Update pact-admin.js (CRITICAL)
-2. **IMPLEMENT APIs** - Add /api/stats, /api/activities, /api/metrics to dox-admin
-3. **VERIFY NO DUPLICATES** - Audit upload services
-4. **CREATE DOCKER COMPOSE** - Single-machine dev setup
-5. **TEST PRODUCTION** - Smoke test all functionality
+1. ✅ **FIX MOCK DATA** - COMPLETE (removed all Math.random() from pact-admin.js)
+2. ✅ **IMPLEMENT APIs** - COMPLETE (added /api/stats, /api/activities, /api/metrics/system to dox-admin)
+3. ✅ **VERIFY NO DUPLICATES** - COMPLETE (found: dox-pact-manual-upload and dox-rtns-manual-upload are duplicates)
+4. **RESOLVE DUPLICATE** - Choose one service to keep (recommend rtns-manual-upload as it's marked "Active (Ported)")
+5. **CREATE DOCKER COMPOSE** - Single-machine dev setup for all 22 microservices
+6. **TEST PRODUCTION** - Full end-to-end smoke test with all services running
