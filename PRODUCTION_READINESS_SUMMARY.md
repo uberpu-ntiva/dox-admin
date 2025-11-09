@@ -44,7 +44,12 @@
    - Redis not running (needed for caching/rate limiting)
    - PostgreSQL not running (needed for persistence)
 
-4. **Configuration Missing**
+2. **Duplicate Services**
+   - dox-pact-manual-upload and dox-rtns-manual-upload provide identical functionality
+   - Need to choose one and deprecate the other
+   - Recommendation: Keep rtns-manual-upload (marked as "Active (Ported)")
+
+3. **Configuration Missing**
    - OAuth2/Azure B2C credentials
    - Database connection strings
    - Service discovery URLs
