@@ -531,10 +531,30 @@
 - Production-ready documentation
 - Service registered as active in registry
 
+## Session 2 Documentation Organization
+
+### Compyle Directory Structure
+All session-specific local files are now organized in:
+```
+/dox-admin/docs/compyle/session-2-phase2-week2/
+├── NEXT_TASK_dox-core-store-completion.md    # Named next task
+├── SESSION_SUMMARY.md                         # Complete session summary
+├── FILE_VALIDATION_ARCHITECTURE.md           # Architecture doc
+├── DATABASE_SCHEMA.md                        # Database design
+├── TEAM_INFRASTRUCTURE_PLAN.md               # Team plans (7 files)
+├── TEAM_DOCUMENT_PLAN.md
+├── TEAM_SIGNING_PLAN.md
+├── TEAM_ACTIVATION_PLAN.md
+├── TEAM_DATA_PLAN.md
+├── TEAM_FRONTEND_PLAN.md
+└── TEAM_AUTOMATION_PLAN.md
+```
+
 ## How to Continue from Here
 
 ### Session 3 Checklist
 
+- [ ] Read SESSION_SUMMARY.md for complete context
 - [ ] Read NEXT_TASK_dox-core-store-completion.md (from compyle directory)
 - [ ] Set up Alembic migration system for dox-core-store
 - [ ] Create comprehensive test suite (unit + integration)
