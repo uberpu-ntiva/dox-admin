@@ -57,8 +57,8 @@ class AdminUser:
     full_name: str
     role: UserRole
     is_active: bool
-    last_login: Optional[datetime] = None
     created_at: datetime
+    last_login: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 @dataclass
