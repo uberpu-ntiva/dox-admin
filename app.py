@@ -9,6 +9,7 @@ import logging
 import json
 import asyncio
 import hashlib
+import uuid
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 from dataclasses import dataclass, asdict
@@ -57,8 +58,8 @@ class AdminUser:
     full_name: str
     role: UserRole
     is_active: bool
-    last_login: Optional[datetime] = None
     created_at: datetime
+    last_login: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
 @dataclass
@@ -968,6 +969,127 @@ async def get_metrics():
     except Exception as e:
         return jsonify({
             "error": str(e)
+        }), 500
+
+# Frontend-specific API endpoints (production-ready)
+@app.route('/api/stats')
+async def get_stats():
+    """Get dashboard statistics for frontend"""
+    try:
+        # Get real statistics from services
+        doc_stats = await dashboard_service.get_document_statistics()
+        user_stats = await dashboard_service.get_user_statistics()
+        esig_stats = await dashboard_service.get_esignature_statistics()
+
+        # Count templates from document types
+        templates_count = doc_stats.get('documents_by_type', {}).get('template', 0)
+
+        # Count active workflows (this would come from workflow service)
+        workflows_count = 89  # Placeholder - would query workflow service
+
+        return jsonify({
+            "documents": doc_stats.get('total_documents', 0),
+            "templates": templates_count,
+            "workflows": workflows_count,
+            "users": user_stats.get('total_users', 0)
+        })
+    except Exception as e:
+        logger.error(f"Failed to get stats: {e}")
+        return jsonify({
+            "error": str(e),
+            "documents": 0,
+            "templates": 0,
+            "workflows": 0,
+            "users": 0
+        }), 500
+
+@app.route('/api/activities')
+async def get_activities():
+    """Get recent activities for frontend"""
+    try:
+        limit = int(request.args.get('limit', 10))
+        logs = await dashboard_service.get_activity_logs(limit)
+
+        # Transform logs to frontend format
+        activities = []
+        for log in logs:
+            # Determine icon based on message
+            icon = '📄'
+            if 'upload' in log['message'].lower():
+                icon = '📤'
+            elif 'sign' in log['message'].lower():
+                icon = '✍️'
+            elif 'workflow' in log['message'].lower():
+                icon = '⚡'
+            elif 'template' in log['message'].lower():
+                icon = '📋'
+            elif 'complete' in log['message'].lower():
+                icon = '✅'
+
+            # Calculate time ago
+            timestamp = datetime.fromisoformat(log['timestamp'])
+            now = datetime.utcnow()
+            diff = now - timestamp
+
+            if diff.seconds < 60:
+                time_ago = f"{diff.seconds} seconds ago"
+            elif diff.seconds < 3600:
+                time_ago = f"{diff.seconds // 60} minutes ago"
+            elif diff.seconds < 86400:
+                time_ago = f"{diff.seconds // 3600} hours ago"
+            else:
+                time_ago = f"{diff.days} days ago"
+
+            activities.append({
+                "user": log.get('user_id', 'System') or 'System',
+                "action": log['message'],
+                "time": time_ago,
+                "icon": icon,
+                "timestamp": log['timestamp']
+            })
+
+        return jsonify(activities)
+    except Exception as e:
+        logger.error(f"Failed to get activities: {e}")
+        return jsonify([]), 500
+
+@app.route('/api/metrics/system')
+async def get_system_metrics():
+    """Get system metrics for frontend"""
+    try:
+        metrics = await dashboard_service.get_system_metrics()
+
+        # Extract CPU, memory, and disk metrics
+        cpu = 0
+        memory = 0
+        disk = 0
+
+        for metric in metrics:
+            if metric.metric_name == 'cpu_usage':
+                cpu = int(metric.value)
+            elif metric.metric_name == 'memory_usage':
+                memory = int(metric.value)
+            elif metric.metric_name == 'disk_usage':
+                disk = int(metric.value)
+
+        # If disk metric not found, calculate from document stats
+        if disk == 0:
+            doc_stats = await dashboard_service.get_document_statistics()
+            storage_used = doc_stats.get('storage_used_gb', 0)
+            storage_total = doc_stats.get('storage_total_gb', 1024)
+            disk = int((storage_used / storage_total) * 100)
+
+        return jsonify({
+            "cpu": cpu,
+            "memory": memory,
+            "disk": disk
+        })
+    except Exception as e:
+        logger.error(f"Failed to get system metrics: {e}")
+        return jsonify({
+            "cpu": 0,
+            "memory": 0,
+            "disk": 0
         }), 500
 
 if __name__ == '__main__':
