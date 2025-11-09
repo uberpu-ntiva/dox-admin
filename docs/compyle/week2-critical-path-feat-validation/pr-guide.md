@@ -37,4 +37,12 @@ Documentation created:
 4. Use title and description from above
 
 ### Method 2: GitHub CLI
+```bash
+# For dox-tmpl-pdf-recognizer
+cd dox-tmpl-pdf-recognizer
+gh pr create -B main -H feat/week2-validation
 
+# For dox-tmpl-pdf-upload
+cd dox-tmpl-pdf-upload
+gh pr create -B main -H feat/week2-docs
+```
