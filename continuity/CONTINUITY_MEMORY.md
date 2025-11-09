@@ -535,7 +535,7 @@
 
 ### Session 3 Checklist
 
-- [ ] Read NEXT_TASK_dox-core-store-completion.md
+- [ ] Read NEXT_TASK_dox-core-store-completion.md (from compyle directory)
 - [ ] Set up Alembic migration system for dox-core-store
 - [ ] Create comprehensive test suite (unit + integration)
 - [ ] Complete remaining API routes (users, templates, bundles)
