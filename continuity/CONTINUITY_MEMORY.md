@@ -496,7 +496,7 @@
 
 ### 🎯 NEXT NAMED TASK: Complete dox-core-store Service
 
-**Task File**: `/dox-admin/continuity/NEXT_TASK_dox-core-store-completion.md`
+**Task File**: `/dox-admin/docs/compyle/session-2-phase2-week2/NEXT_TASK_dox-core-store-completion.md`
 **Priority**: CRITICAL PATH
 **Estimated Duration**: 3-5 days
 **Status**: Ready to Start
