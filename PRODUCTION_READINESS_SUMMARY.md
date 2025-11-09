@@ -219,16 +219,25 @@ services:
 
 ## Duplicate Repository Analysis
 
-### Potential Duplicates:
-1. **dox-pact-manual-upload** vs **dox-rtns-manual-upload**
-   - Both handle manual document uploads
-   - Need to verify if they serve different document types
-   - If same function: CONSOLIDATE
+### ✅ VERIFIED - Analysis Complete
 
-2. **dox-tmpl-pdf-upload** vs **dox-pact-manual-upload**
-   - May overlap in PDF upload functionality
-   - Need to verify unique purposes
-   - If overlap: REMOVE duplicate logic
+**CONFIRMED DUPLICATES:**
+
+1. **dox-pact-manual-upload** vs **dox-rtns-manual-upload** - **DUPLICATES**
+   - ✅ Both configured in gateway (ports 5018 and 5019)
+   - ✅ Identical functionality: Document return processing with datamatrix codes and template matching
+   - ✅ Identical API endpoints: `/api/returns/upload`, `/api/returns/manual-upload`, etc.
+   - ✅ Same features: SharePoint integration, OCR, handwriting detection, field mapping
+   - **Decision Required**: Choose one to keep (rtns-manual-upload is marked as "Active (Ported)" - likely the newer version)
+   - **Action**: Deprecate dox-pact-manual-upload or consolidate into rtns-manual-upload
+
+**NOT DUPLICATES:**
+
+2. **dox-tmpl-pdf-upload** - **NOT A DUPLICATE**
+   - ✅ Different purpose: Template file upload and storage (NOT document returns)
+   - ✅ Status: PLANNED (not yet implemented)
+   - ✅ No overlap with pact-manual-upload or rtns-manual-upload
+   - **Action**: None needed - different service function
 
 ## Action Plan
 
