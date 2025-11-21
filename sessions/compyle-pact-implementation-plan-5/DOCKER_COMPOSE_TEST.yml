@@ -1,0 +1,131 @@
+# docker-compose.test.yml
+# Test environment for integration testing in CI/CD pipeline
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
+  # Azurite (Azure Blob Storage Emulator)
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: "azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0"
+    ports:
+      - "10000:10000"  # Blob service
+      - "10001:10001"  # Queue service
+      - "10002:10002"  # Table service
+    volumes:
+      - azurite_test_data:/data
+
+  # Auth Service
+  dox-core-auth:
+    build:
+      context: ../dox-core-auth
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@postgres:5432/test_db
+      JWT_SECRET: test-secret-key-change-in-production
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 15
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: 7
+      TESTING: "true"
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Storage Service
+  dox-core-store:
+    build:
+      context: ../dox-core-store
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@postgres:5432/test_db
+      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+      DEFAULT_CONTAINER: "test-documents"
+      TESTING: "true"
+    ports:
+      - "8002:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      azurite:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Template Service
+  dox-tmpl-service:
+    build:
+      context: ../dox-tmpl-service
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://test_user:test_password@postgres:5432/test_db
+      TESTING: "true"
+    ports:
+      - "8003:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Gateway (for integration testing)
+  dox-gtwy-main:
+    build:
+      context: ../dox-gtwy-main
+      dockerfile: Dockerfile
+    environment:
+      AUTH_URL: http://dox-core-auth:8000
+      STORE_URL: http://dox-core-store:8000
+      TMPL_URL: http://dox-tmpl-service:8000
+      TESTING: "true"
+    ports:
+      - "8000:8000"
+    depends_on:
+      dox-core-auth:
+        condition: service_healthy
+      dox-core-store:
+        condition: service_healthy
+      dox-tmpl-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_test_data:
+  azurite_test_data:
+
+# Usage:
+# docker-compose -f docker-compose.test.yml up -d
+# docker-compose -f docker-compose.test.yml down -v

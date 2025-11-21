@@ -1,0 +1,159 @@
+name: Create Implementation PRs
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch_prefix:
+        description: 'Branch prefix to check (e.g., "compyle/", "feature/")'
+        required: false
+        default: 'compyle/'
+
+jobs:
+  create-prs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository:
+          - dox-tmpl-pdf-upload
+          - dox-mcp-server
+          - dox-core-auth
+          - dox-core-store
+          - dox-tmpl-service
+          - dox-tmpl-field-mapper
+          - dox-tmpl-pdf-recognizer
+      max-parallel: 2
+    steps:
+      - name: Find and Create PR
+        uses: actions/github-script@v7
+        env:
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ matrix.repository }}
+          BRANCH_PREFIX: ${{ github.event.inputs.branch_prefix }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = process.env.REPO_OWNER;
+            const repo = process.env.REPO_NAME;
+            const prefix = process.env.BRANCH_PREFIX || 'compyle/';
+
+            console.log(`Checking ${owner}/${repo} for branches starting with ${prefix}`);
+
+            try {
+              // List all branches
+              const { data: branches } = await github.rest.repos.listBranches({
+                owner,
+                repo,
+                per_page: 100
+              });
+
+              // Find implementation branch
+              const implBranch = branches.find(b => b.name.startsWith(prefix));
+
+              if (!implBranch) {
+                console.log(`No branch starting with ${prefix} found`);
+                return;
+              }
+
+              const head = implBranch.name;
+              const base = 'main';
+
+              console.log(`Found branch: ${head}`);
+
+              // Check if PR already exists
+              const { data: pulls } = await github.rest.pulls.list({
+                owner,
+                repo,
+                state: 'open',
+                head: `${owner}:${head}`,
+                base: base,
+                per_page: 10
+              });
+
+              if (pulls.length > 0) {
+                console.log(`PR already exists: ${pulls[0].html_url}`);
+                return;
+              }
+
+              // Compare branches
+              const { data: comparison } = await github.rest.repos.compareCommits({
+                owner,
+                repo,
+                base: base,
+                head: head
+              });
+
+              if (comparison.total_commits === 0) {
+                console.log('No commits ahead');
+                return;
+              }
+
+              // Create PR title from first commit
+              const title = comparison.commits[0].commit.message.split('\n')[0];
+              const commitsAhead = comparison.total_commits;
+
+              // Build PR body
+              let body = `## Implementation Summary\n\n`;
+              body += `Automated PR from implementation branch: \`${head}\`\n\n`;
+              body += `**Commits**: ${commitsAhead}\n\n`;
+
+              body += `### Recent Commits\n\`\`\`\n`;
+              comparison.commits.slice(0, 10).forEach(commit => {
+                body += `${commit.sha.substring(0, 7)} - ${commit.commit.message.split('\n')[0]}\n`;
+              });
+              body += `\`\`\`\n\n`;
+
+              body += `### Files Changed\n`;
+              const fileCount = comparison.files.length;
+              body += `${fileCount} file(s) changed\n\n`;
+
+              if (fileCount <= 10) {
+                body += `\`\`\`\n`;
+                comparison.files.forEach(file => {
+                  body += `${file.status.toUpperCase()} ${file.filename}\n`;
+                });
+                body += `\`\`\`\n\n`;
+              }
+
+              body += `---\n`;
+              body += `Generated with Compyle\n`;
+
+              // Create PR
+              const { data: pr } = await github.rest.pulls.create({
+                owner,
+                repo,
+                title: title,
+                head: head,
+                base: base,
+                body: body,
+                draft: false
+              });
+
+              console.log(`✅ PR Created: ${pr.html_url}`);
+
+            } catch (error) {
+              if (error.status === 404) {
+                console.log(`Repository not found or no access: ${repo}`);
+              } else if (error.status === 422) {
+                console.log(`Cannot create PR for ${repo}: ${error.message}`);
+              } else {
+                console.log(`Error for ${repo}: ${error.message}`);
+              }
+            }
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: create-prs
+    if: always()
+    steps:
+      - name: Workflow Summary
+        run: |
+          echo "## Implementation PR Workflow Complete ✅"
+          echo ""
+          echo "### Summary"
+          echo "- Scanned all repositories for implementation branches"
+          echo "- Created PRs for branches with commits ahead of main"
+          echo ""
+          echo "### Next Steps"
+          echo "1. Review PRs on GitHub"
+          echo "2. Run any required CI/CD checks"
+          echo "3. Merge to main when ready"
