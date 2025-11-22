@@ -2,7 +2,7 @@
 
 **Central Registry of All Internal Planning Documents**
 
-**Location**: `/dox-admin/strategy/` (Single Source of Truth)
+**Location**: `/dox-admin/governance/` (Single Source of Truth)
 
 **Last Updated**: 2025-10-31
 
@@ -19,7 +19,7 @@ This registry tracks all internal planning files (tasks, sprints, roadmaps, meet
 ## Planning Files Structure
 
 ```
-/dox-admin/strategy/
+/dox-admin/governance/
 ├── PLANNING_FILES_REGISTRY.md        ← This file (master index)
 ├── planning/                         ← All planning documents
 │   ├── BACKLOG.md                   ← Cross-team backlog
@@ -341,7 +341,7 @@ When creating a new service or team plan, use this template:
 ```markdown
 # [Service or Team] Planning
 
-**Location**: `/dox-admin/strategy/planning/[service-or-team]-PLAN.md`
+**Location**: `/dox-admin/governance/planning/[service-or-team]-PLAN.md`
 
 **Responsible Party**: [Team name or individual]
 

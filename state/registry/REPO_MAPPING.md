@@ -175,7 +175,7 @@ mkdir dox-rtns-manual-upload
 cd dox-rtns-manual-upload
 
 # Copy SERVICE_TEMPLATE structure
-cp -r /dox-admin/strategy/SERVICE_TEMPLATE/* .
+cp -r /dox-admin/governance/templates/SERVICE_TEMPLATE/* .
 
 # Initialize git
 git init
@@ -239,14 +239,14 @@ cp -r [old-repo]/app/* app/
 
 **4.1 Update Central Registry**:
 ```bash
-# 1. Edit /dox-admin/strategy/SERVICES_REGISTRY.md
+# 1. Edit /dox-admin/state/registry/SERVICES_REGISTRY.md
 # - Update dox-rtns-manual-upload entry
 # - Set status to "In Progress" (W14-18)
 # - Set team to "Signing Team"
 # - Document dependencies
 
 # 2. Create memory bank entry
-# /dox-admin/strategy/memory-banks/SERVICE_dox-rtns-manual-upload.json
+# /dox-admin/state/memory-banks/SERVICE_dox-rtns-manual-upload.json
 {
   "service_name": "dox-rtns-manual-upload",
   "team": "Signing",
@@ -262,7 +262,7 @@ cp -r [old-repo]/app/* app/
 }
 
 # 3. Update team coordination file
-# /dox-admin/strategy/memory-banks/TEAM_SIGNING.json
+# /dox-admin/state/memory-banks/TEAM_SIGNING.json
 # - Add dox-rtns-manual-upload to services list
 # - Update team status
 ```
@@ -339,10 +339,10 @@ Before marking as complete:
 ## References
 
 **Related Documents**:
-- `/dox-admin/strategy/SERVICES_REGISTRY.md` - Master service catalog
-- `/dox-admin/strategy/SERVICE_TEMPLATE/` - Boilerplate for new services
-- `/dox-admin/strategy/standards/API_STANDARDS.md` - API patterns
-- `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
+- `/dox-admin/state/registry/SERVICES_REGISTRY.md` - Master service catalog
+- `/dox-admin/governance/templates/SERVICE_TEMPLATE/` - Boilerplate for new services
+- `/dox-admin/governance/standards/API_STANDARDS.md` - API patterns
+- `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
 
 ---
 

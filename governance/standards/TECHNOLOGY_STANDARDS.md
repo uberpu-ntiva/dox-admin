@@ -434,9 +434,9 @@ Each service is a **monolith** (not microservices within services):
 ## REFERENCES
 
 **See Also**:
-- `/dox-admin/strategy/standards/API_STANDARDS.md` - API patterns
-- `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
-- `/dox-admin/strategy/SERVICE_TEMPLATE/` - Template repository
+- `/dox-admin/governance/standards/API_STANDARDS.md` - API patterns
+- `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
+- `/dox-admin/governance/templates/SERVICE_TEMPLATE/` - Template repository
 
 ---
 

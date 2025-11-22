@@ -437,7 +437,7 @@ mkdir -p $CONFIG_BACKUP_DIR
 # Backup configuration files
 tar -czf "$CONFIG_BACKUP_DIR/dox-config_$DATE.tar.gz" \
     strategy/workflows/ \
-    strategy/memory-banks/ \
+    state/memory-banks/ \
     .env \
     docker-compose.yml \
     monitoring/
@@ -493,7 +493,7 @@ fi
 # Backup current configuration
 tar -czf "config-backup-$(date +%Y%m%d_%H%M%S).tar.gz" \
     strategy/workflows/ \
-    strategy/memory-banks/ \
+    state/memory-banks/ \
     .env
 
 # Restore configuration
@@ -835,16 +835,16 @@ curl -X POST http://localhost:5007/api/v1/validate/scan \
 **Resolution Steps:**
 ```bash
 # 1. Check file permissions
-ls -la strategy/memory-banks/
+ls -la state/memory-banks/
 
 # 2. Validate JSON files
-for file in strategy/memory-banks/*.json; do
+for file in state/memory-banks/*.json; do
     python -m json.tool "$file" > /dev/null 2>&1 || echo "Invalid JSON: $file"
 done
 
 # 3. Fix permissions if needed
-chmod 664 strategy/memory-banks/*.json
-chown dox:dox strategy/memory-banks/*.json
+chmod 664 state/memory-banks/*.json
+chown dox:dox state/memory-banks/*.json
 
 # 4. Test memory bank update
 curl -X POST http://localhost:5000/api/v1/coordination/sync

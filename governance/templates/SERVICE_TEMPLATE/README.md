@@ -275,16 +275,16 @@ docker-compose logs -f [SERVICE-NAME]
 ### Getting Help
 
 - Slack: #[team-channel]
-- Docs: See `/dox-admin/strategy/` for comprehensive documentation
+- Docs: See `/dox-admin/governance/` for comprehensive documentation
 - Runbook: See `docs/SETUP.md` for operational runbook
 
 ## References
 
-- **Master Service Registry**: `/dox-admin/strategy/SERVICES_REGISTRY.md`
-- **API Standards**: `/dox-admin/strategy/standards/API_STANDARDS.md`
-- **Technology Stack**: `/dox-admin/strategy/standards/TECHNOLOGY_STANDARDS.md`
-- **Deployment Guide**: `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md`
-- **Multi-Agent Protocol**: `/dox-admin/strategy/standards/MULTI_AGENT_COORDINATION.md`
+- **Master Service Registry**: `/dox-admin/state/registry/SERVICES_REGISTRY.md`
+- **API Standards**: `/dox-admin/governance/standards/API_STANDARDS.md`
+- **Technology Stack**: `/dox-admin/governance/standards/TECHNOLOGY_STANDARDS.md`
+- **Deployment Guide**: `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md`
+- **Multi-Agent Protocol**: `/dox-admin/governance/standards/MULTI_AGENT_COORDINATION.md`
 
 ## License
 

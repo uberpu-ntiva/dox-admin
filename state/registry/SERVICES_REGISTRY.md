@@ -233,8 +233,8 @@ Central administrative hub and specification repository. Houses all master docum
   - `reference/` - Master PDFs copied here
 
 **Key Files:**
-- `strategy/SERVICES_REGISTRY.md` - This document (master service catalog)
-- `strategy/SERVICE_TEMPLATE/` - Standard folder structure for all 20 services
+- `state/registry/SERVICES_REGISTRY.md` - This document (master service catalog)
+- `governance/templates/SERVICE_TEMPLATE/` - Standard folder structure for all 20 services
 - `strategy/REPO_MAPPING.md` - Existing repos → Pact services mapping
 - `strategy/API_STANDARDS.md` - REST API patterns and security standards
 - `strategy/TECHNOLOGY_STANDARDS.md` - Locked technology stack per service
@@ -946,7 +946,7 @@ AI-driven recommendation engine providing intelligent suggestions for document r
 
 ## MEMORY BANK STRUCTURE
 
-**Location**: `/dox-admin/strategy/memory-banks/`
+**Location**: `/dox-admin/state/memory-banks/`
 
 **File Structure**:
 ```
@@ -1094,11 +1094,11 @@ memory-banks/
 
 **Planning Document**: `/workspace/cmhfcgyd7045kojiqg150pqth/planning.md`
 
-**Master PDFs**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/strategy/reference/`
+**Master PDFs**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/governance/reference/`
 
-**Service Template**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/strategy/SERVICE_TEMPLATE/`
+**Service Template**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/governance/templates/SERVICE_TEMPLATE/`
 
-**Standards**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/strategy/standards/`
+**Standards**: `/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/governance/standards/`
 
 ---
 

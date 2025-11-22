@@ -38,7 +38,7 @@ This document provides the specific protocols and conventions for working on the
 
 **FIXED**: All agents must adhere to the formal protocol for task acknowledgement, file locking, and status reporting.
 
-**IMPORTANT: All agents MUST read and adhere to the full protocol documented in `/dox-admin/strategy/standards/MULTI_AGENT_COORDINATION.md` before taking any action.**
+**IMPORTANT: All agents MUST read and adhere to the full protocol documented in `/dox-admin/governance/standards/MULTI_AGENT_COORDINATION.md` before taking any action.**
 
 Failure to comply with the protocol may result in conflicting changes and work being overwritten.
 
@@ -180,7 +180,7 @@ Health checks must verify:
 
 ## Continuity Updates
 
-**REQUIRED**: After completing any significant work on this service, agents must update `/dox-admin/continuity/CONTINUITY_MEMORY.md` with:
+**REQUIRED**: After completing any significant work on this service, agents must update `/dox-admin/state/CONTINUITY_MEMORY.md` with:
 
 - What features were added or modified
 - Which files were created/modified
@@ -200,9 +200,9 @@ This ensures proper handoff between agents and implementation sessions.
 **Template placeholder**:
 - **Team**: [Team Name from SERVICES_REGISTRY.md]
 - **Service Owner**: [Team Lead]
-- **Coordination**: Via `/dox-admin/strategy/memory-banks/TEAM_[TEAM_NAME].json`
-- **Standards**: `/dox-admin/strategy/standards/`
-- **Service Registry**: `/dox-admin/strategy/SERVICES_REGISTRY.md`
+- **Coordination**: Via `/dox-admin/state/memory-banks/TEAM_[TEAM_NAME].json`
+- **Standards**: `/dox-admin/governance/standards/`
+- **Service Registry**: `/dox-admin/state/registry/SERVICES_REGISTRY.md`
 
 ---
 

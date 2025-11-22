@@ -355,7 +355,7 @@ steps:
 
 ### Memory Bank Configuration
 
-Memory banks are stored in `strategy/memory-banks/`:
+Memory banks are stored in `state/memory-banks/`:
 
 - `WORKFLOW_EXECUTION_LOG.json`: Workflow execution audit trail
 - `SUPERVISOR.json`: Master coordination log
@@ -471,7 +471,7 @@ docker logs dox-workflow-orchestrator | grep ERROR
 curl http://localhost:5000/api/v1/services/health
 
 # Check memory banks
-ls -la strategy/memory-banks/
+ls -la state/memory-banks/
 ```
 
 #### 3. Validation Service Errors
@@ -602,7 +602,7 @@ pg_dump -h localhost -U dox_user -d dox_workflows > backup_$(date +%Y%m%d).sql
 # Backup configuration files
 tar -czf dox-config-backup-$(date +%Y%m%d).tar.gz \
     strategy/workflows/ \
-    strategy/memory-banks/ \
+    state/memory-banks/ \
     .env \
     docker-compose.yml
 ```
@@ -718,7 +718,7 @@ docker-compose up -d --no-deps dox-validation-service
 ### File Locations
 
 - **Workflows**: `strategy/workflows/`
-- **Memory Banks**: `strategy/memory-banks/`
+- **Memory Banks**: `state/memory-banks/`
 - **Configuration**: `strategy/services/`
 - **Monitoring**: `strategy/monitoring/`
 - **Documentation**: `strategy/docs/`

@@ -612,9 +612,9 @@ user.ssn = encrypted_ssn
 ## References
 
 **Related Standards**:
-- `/dox-admin/strategy/standards/AUTH_STANDARDS.md` - JWT and RBAC details
-- `/dox-admin/strategy/standards/TECHNOLOGY_STANDARDS.md` - Tech stack per service
-- `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
+- `/dox-admin/governance/standards/AUTH_STANDARDS.md` - JWT and RBAC details
+- `/dox-admin/governance/standards/TECHNOLOGY_STANDARDS.md` - Tech stack per service
+- `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md` - Deployment patterns
 
 **External References**:
 - [REST API Best Practices](https://restfulapi.net/)

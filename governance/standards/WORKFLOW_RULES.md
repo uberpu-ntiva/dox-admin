@@ -310,31 +310,31 @@ memory_bank_updates:
 All workflows update memory banks for coordination visibility.
 
 ### SERVICE_*.json Updates
-- Location: dox-admin/strategy/memory-banks/SERVICE_[service_name].json
+- Location: dox-admin/state/memory-banks/SERVICE_[service_name].json
 - Fields: processed_documents, validation_stats, last_document_id, status
 - Frequency: After each workflow step
 - Purpose: Individual service tracking
 
 ### TEAM_*.json Updates
-- Location: dox-admin/strategy/memory-banks/TEAM_[team_name].json
+- Location: dox-admin/state/memory-banks/TEAM_[team_name].json
 - Fields: team_blockers, external_dependencies, test_pass_rate, deployment_status
 - Frequency: Daily during sync_team_coordination
 - Purpose: Cross-team visibility
 
 ### SUPERVISOR.json Updates
-- Location: dox-admin/strategy/memory-banks/SUPERVISOR.json
+- Location: dox-admin/state/memory-banks/SUPERVISOR.json
 - Fields: overall_progress_percent, blockers_count, teams_on_track, critical_alerts
 - Frequency: After all workflows execute
 - Purpose: Master coordination tracking
 
 ### BLOCKING_ISSUES.json Updates
-- Location: dox-admin/strategy/memory-banks/BLOCKING_ISSUES.json
+- Location: dox-admin/state/memory-banks/BLOCKING_ISSUES.json
 - Entry: Automatically created on escalate error
 - Fields: issue_id, severity, service, description, timestamp, assigned_team
 - Purpose: Cross-team issue tracking
 
 ### WORKFLOW_EXECUTION_LOG.json Updates
-- Location: dox-admin/strategy/memory-banks/WORKFLOW_EXECUTION_LOG.json
+- Location: dox-admin/state/memory-banks/WORKFLOW_EXECUTION_LOG.json
 - Entry: Every workflow execution logged
 - Fields: workflow_id, name, start_time, end_time, status, steps_executed
 - Purpose: Audit trail and performance tracking

@@ -40,6 +40,7 @@ dox-admin/
 - **Single Source of Truth**: All standards live in `governance/standards/`.
 - **Service Template**: All new services must clone `governance/templates/SERVICE_TEMPLATE`.
 - **Changes**: Modifying governance requires a pull request and Supervisor approval.
+- **Git Workflow**: Follow `governance/standards/GIT_WORKFLOW.md` for synchronization.
 
 ### 2. Memory-Bank Protocol
 - **Location**: `state/memory-banks/`.

@@ -315,7 +315,7 @@ async def migrate_service_keys(service_name: str):
 
 ### Updated Jules Standards
 
-**Reference**: `/dox-admin/strategy/standards/JULES_AI_STANDARDS.md`
+**Reference**: `/dox-admin/governance/standards/JULES_AI_STANDARDS.md`
 
 **Security Requirements (Updated)**:
 - ✅ **No hardcoded secrets** - Use centralized key storage

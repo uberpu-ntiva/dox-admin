@@ -46,7 +46,7 @@ Each agent follows this lifecycle:
 8. SHUTDOWN → Update status as done
 ```
 
-**NEW: Continuity Update Requirement** - All agents MUST update `/dox-admin/continuity/CONTINUITY_MEMORY.md` after completing significant work to ensure proper session-to-session handoff.
+**NEW: Continuity Update Requirement** - All agents MUST update `/dox-admin/state/CONTINUITY_MEMORY.md` after completing significant work to ensure proper session-to-session handoff.
 
 ---
 
@@ -54,10 +54,10 @@ Each agent follows this lifecycle:
 
 ### Central Coordination Hub
 
-**Location**: `/dox-admin/strategy/`
+**Location**: `/dox-admin/governance/`
 
 ```
-/dox-admin/strategy/
+/dox-admin/governance/
 ├── SERVICES_REGISTRY.md              # Master service catalog
 ├── memory-banks/                     # Agent coordination files
 │   ├── SUPERVISOR.json              # Master log
@@ -106,7 +106,7 @@ Each agent follows this lifecycle:
   "status": "active",
   "locked_resources": [
     "/workspace/cmhfcgyd7045kojiqg150pqth/dox-tmpl-pdf-recognizer/app/app.py",
-    "/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/strategy/memory-banks/SERVICE_dox-tmpl-pdf-recognizer.json"
+    "/workspace/cmhfcgyd7045kojiqg150pqth/dox-admin/state/memory-banks/SERVICE_dox-tmpl-pdf-recognizer.json"
   ],
   "proposed_branch": "feature/pdf-upload-validation",
   "git_commit_count": 2,
@@ -207,7 +207,7 @@ def wait_for_lock(file_path, max_wait_seconds=600):
 
 ### Service Status File
 
-**Location**: `/dox-admin/strategy/memory-banks/SERVICE_[service-name].json`
+**Location**: `/dox-admin/state/memory-banks/SERVICE_[service-name].json`
 
 **Schema**:
 ```json
@@ -260,7 +260,7 @@ def wait_for_lock(file_path, max_wait_seconds=600):
 
 ### Team Coordination File
 
-**Location**: `/dox-admin/strategy/memory-banks/TEAM_[team-name].json`
+**Location**: `/dox-admin/state/memory-banks/TEAM_[team-name].json`
 
 **Schema**:
 ```json
@@ -299,7 +299,7 @@ def wait_for_lock(file_path, max_wait_seconds=600):
 
 ### API Contracts Registry
 
-**Location**: `/dox-admin/strategy/memory-banks/API_CONTRACTS.json`
+**Location**: `/dox-admin/state/memory-banks/API_CONTRACTS.json`
 
 **Schema**:
 ```json
@@ -519,7 +519,7 @@ The continuity memory system ensures that implementation context is preserved ac
 
 ### When to Update Continuity Memory
 
-Agents **MUST** update `/dox-admin/continuity/CONTINUITY_MEMORY.md` when:
+Agents **MUST** update `/dox-admin/state/CONTINUITY_MEMORY.md` when:
 
 1. **Completing a major feature** - Service implementation, new endpoint, major refactor
 2. **Completing a sprint milestone** - End of sprint, phase completion
@@ -566,7 +566,7 @@ Agents **MUST** update `/dox-admin/continuity/CONTINUITY_MEMORY.md` when:
 
 ```python
 # 1. Read current continuity memory
-continuity_doc = read_file('/dox-admin/continuity/CONTINUITY_MEMORY.md')
+continuity_doc = read_file('/dox-admin/state/CONTINUITY_MEMORY.md')
 
 # 2. Add new session section after Executive Summary
 new_section = f"""
@@ -595,7 +595,7 @@ update_task_status_table(completed_tasks)
 update_repository_list(new_repos)
 
 # 6. Write back atomically
-write_file_atomic('/dox-admin/continuity/CONTINUITY_MEMORY.md', updated_doc)
+write_file_atomic('/dox-admin/state/CONTINUITY_MEMORY.md', updated_doc)
 ```
 
 ### Continuity Update Checklist
@@ -759,10 +759,10 @@ done
 
 ```bash
 # Verify memory bank integrity
-cat /dox-admin/strategy/memory-banks/SERVICE_[name].json | python -m json.tool
+cat /dox-admin/state/memory-banks/SERVICE_[name].json | python -m json.tool
 
 # Check for stale data
-grep "last_update" /dox-admin/strategy/memory-banks/SERVICE_*.json | sort
+grep "last_update" /dox-admin/state/memory-banks/SERVICE_*.json | sort
 ```
 
 ---
@@ -771,8 +771,8 @@ grep "last_update" /dox-admin/strategy/memory-banks/SERVICE_*.json | sort
 
 **See Also**:
 - `/dox-tmpl-pdf-recognizer/docs/agent-protocol/README.md` - Original protocol
-- `/dox-admin/strategy/SERVICES_REGISTRY.md` - Service catalog
-- `/dox-admin/strategy/standards/` - All standards
+- `/dox-admin/state/registry/SERVICES_REGISTRY.md` - Service catalog
+- `/dox-admin/governance/standards/` - All standards
 
 ---
 

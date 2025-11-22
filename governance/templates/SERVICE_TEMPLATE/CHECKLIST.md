@@ -239,7 +239,7 @@ Use this checklist when creating a new Pact Platform service.
 
 - [ ] **Create Memory Bank Entry**
   - [ ] Create `memory-banks/SERVICE_[name].json`
-  - [ ] Add to `/dox-admin/strategy/memory-banks/`
+  - [ ] Add to `/dox-admin/state/memory-banks/`
   - [ ] Join team's coordination file `TEAM_[name].json`
 
 - [ ] **Join Team Coordination File**

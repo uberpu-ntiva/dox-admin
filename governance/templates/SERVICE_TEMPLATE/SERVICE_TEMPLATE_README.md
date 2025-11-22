@@ -17,7 +17,7 @@ See `CHECKLIST.md` in this folder for the complete list of files to create.
 Each template file includes `[PLACEHOLDERS]` for service-specific content. Search for `REPLACE_ME` or `[Service-Specific]` comments.
 
 ### Step 4: Register Your Service
-Update `/dox-admin/strategy/SERVICES_REGISTRY.md` with your new service entry.
+Update `/dox-admin/state/registry/SERVICES_REGISTRY.md` with your new service entry.
 
 ### Step 5: Initialize Memory Banks
 Create `memory-banks/SERVICE_[name].json` and join your team's coordination file.
@@ -78,7 +78,7 @@ Create `memory-banks/SERVICE_[name].json` and join your team's coordination file
 │       └── .gitkeep
 │
 └── 📚 Reference
-    └── [Reference: /dox-admin/strategy/SERVICES_REGISTRY.md]
+    └── [Reference: /dox-admin/state/registry/SERVICES_REGISTRY.md]
 ```
 
 ---
@@ -133,26 +133,26 @@ Use `CHECKLIST.md` to verify you've created all required files for your service.
 ## Standards to Follow
 
 ### API Standards
-See `/dox-admin/strategy/standards/API_STANDARDS.md` for:
+See `/dox-admin/governance/standards/API_STANDARDS.md` for:
 - REST endpoint patterns
 - Error response format
 - Authentication & RBAC
 - Versioning strategy
 
 ### Technology Standards
-See `/dox-admin/strategy/standards/TECHNOLOGY_STANDARDS.md` for:
+See `/dox-admin/governance/standards/TECHNOLOGY_STANDARDS.md` for:
 - Locked technology stack per service
 - Approved libraries and tools
 - Dependency management
 
 ### Deployment Standards
-See `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md` for:
+See `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md` for:
 - Docker best practices
 - AWS/Azure deployment patterns
 - Configuration management
 
 ### Multi-Agent Coordination
-See `/dox-admin/strategy/standards/MULTI_AGENT_COORDINATION.md` for:
+See `/dox-admin/governance/standards/MULTI_AGENT_COORDINATION.md` for:
 - Agent protocols
 - File locking
 - Status management
@@ -247,9 +247,9 @@ Before deploying to production, ensure:
 ## Questions?
 
 **Refer to:**
-1. `/dox-admin/strategy/SERVICES_REGISTRY.md` - Service specifications
-2. `/dox-admin/strategy/standards/` - Technology and API standards
-3. `/dox-admin/strategy/SERVICE_TEMPLATE/CHECKLIST.md` - File checklist
+1. `/dox-admin/state/registry/SERVICES_REGISTRY.md` - Service specifications
+2. `/dox-admin/governance/standards/` - Technology and API standards
+3. `/dox-admin/governance/templates/SERVICE_TEMPLATE/CHECKLIST.md` - File checklist
 4. `dox-tmpl-pdf-recognizer/` - Working example of a complete service
 
 ---

@@ -3,7 +3,7 @@
 **Date Created**: 2025-10-31
 **Last Updated**: 2025-11-03
 **Status**: Phase 2 In Progress - Document Team Services Implemented
-**Location**: `/dox-admin/continuity/`
+**Location**: `/dox-admin/state/`
 **Purpose**: Preserve implementation context and guide next implementation sessions
 
 ---
@@ -36,7 +36,7 @@
 
 ### System 1: Governance Infrastructure
 
-**Location**: `/dox-admin/strategy/`
+**Location**: `/dox-admin/governance/`
 
 **Master Documents** (3):
 - ✅ `SERVICES_REGISTRY.md` (35 KB) - All 20 services with dependencies
@@ -59,7 +59,7 @@
 
 ### System 2: Planning Hub (NEW)
 
-**Location**: `/dox-admin/strategy/planning/`
+**Location**: `/dox-admin/governance/planning/`
 
 **Master Planning** (2):
 - ✅ `PLANNING_FILES_REGISTRY.md` - Master index
@@ -329,7 +329,7 @@
 ## Structure Overview
 
 ```
-/dox-admin/strategy/                           ← GOVERNANCE HUB (NEW)
+/dox-admin/governance/                           ← GOVERNANCE HUB (NEW)
 ├── README.md (updated with planning refs)
 ├── SERVICES_REGISTRY.md                       ← 20 services cataloged
 ├── PLANNING_FILES_REGISTRY.md                 ← Planning master index
@@ -378,7 +378,7 @@
 ├── team-coordination/                         ← To populate
 └── reference/                                 ← Master PDFs (5 copied)
 
-/dox-admin/continuity/                         ← CONTINUITY MEMORY (NEW)
+/dox-admin/state/                         ← CONTINUITY MEMORY (NEW)
 └── CONTINUITY_MEMORY.md (this file)
 ```
 
@@ -389,7 +389,7 @@
 ### ✅ Immediate (Copy & Use)
 
 **For New Services**:
-1. Copy `/dox-admin/strategy/SERVICE_TEMPLATE/`
+1. Copy `/dox-admin/governance/templates/SERVICE_TEMPLATE/`
 2. Follow `CHECKLIST.md` (13 phases)
 3. Use standards as guide
 4. Register in `SERVICES_REGISTRY.md`
@@ -485,7 +485,7 @@
 
 **Governance Decisions** (Enforced):
 6. ✅ **API Standards**: REST patterns, versioning, error handling (mandatory)
-7. ✅ **Standards Location**: All in `/dox-admin/strategy/` (single source of truth)
+7. ✅ **Standards Location**: All in `/dox-admin/governance/` (single source of truth)
 8. ✅ **Planning Centralization**: All plans in `planning/` (not scattered)
 9. ✅ **Service Template**: Required for all 20 services (consistency)
 10. ✅ **Multi-Agent Coordination**: File locking + memory banks (enabled)
@@ -605,7 +605,7 @@ All session-specific local files are now organized in:
 25. PHASE_1_IMPLEMENTATION_COMPLETE.md
 
 **Continuity**:
-26. continuity/CONTINUITY_MEMORY.md (this file)
+26. state/CONTINUITY_MEMORY.md (this file)
 
 **Total**: 26 core files + templates + memory banks = Complete Phase 1 system
 
@@ -665,9 +665,9 @@ All session-specific local files are now organized in:
 
 **Implementation Agent**: Ready to continue
 **Next Phase**: Week 2 critical path execution
-**Location**: `/dox-admin/strategy/` (all governance)
-**Planning**: `/dox-admin/strategy/planning/` (all tasks)
-**Memory**: `/dox-admin/continuity/` (this document)
+**Location**: `/dox-admin/governance/` (all governance)
+**Planning**: `/dox-admin/governance/planning/` (all tasks)
+**Memory**: `/dox-admin/state/` (this document)
 
 **PR Status**: Ready to create (see PHASE_1_IMPLEMENTATION_COMPLETE.md)
 
@@ -676,21 +676,21 @@ All session-specific local files are now organized in:
 ## Quick Reference Links
 
 **Start Here**:
-- Navigation: `/dox-admin/strategy/README.md`
-- Services: `/dox-admin/strategy/SERVICES_REGISTRY.md`
-- Planning: `/dox-admin/strategy/PLANNING_FILES_REGISTRY.md`
+- Navigation: `/dox-admin/governance/README.md`
+- Services: `/dox-admin/state/registry/SERVICES_REGISTRY.md`
+- Planning: `/dox-admin/governance/PLANNING_FILES_REGISTRY.md`
 
 **Key Standards**:
-- API: `/dox-admin/strategy/standards/API_STANDARDS.md`
-- Tech: `/dox-admin/strategy/standards/TECHNOLOGY_STANDARDS.md`
-- Agents: `/dox-admin/strategy/standards/MULTI_AGENT_COORDINATION.md`
-- Deploy: `/dox-admin/strategy/standards/DEPLOYMENT_STANDARDS.md`
+- API: `/dox-admin/governance/standards/API_STANDARDS.md`
+- Tech: `/dox-admin/governance/standards/TECHNOLOGY_STANDARDS.md`
+- Agents: `/dox-admin/governance/standards/MULTI_AGENT_COORDINATION.md`
+- Deploy: `/dox-admin/governance/standards/DEPLOYMENT_STANDARDS.md`
 
 **Week 2 Tasks**:
-- T04: `/dox-admin/strategy/planning/dox-tmpl-pdf-recognizer-PLAN.md`
-- T09: `/dox-admin/strategy/planning/dox-tmpl-pdf-upload-PLAN.md`
-- Porting: `/dox-admin/strategy/REPO_MAPPING.md`
-- Template: `/dox-admin/strategy/SERVICE_TEMPLATE/CHECKLIST.md`
+- T04: `/dox-admin/governance/planning/dox-tmpl-pdf-recognizer-PLAN.md`
+- T09: `/dox-admin/governance/planning/dox-tmpl-pdf-upload-PLAN.md`
+- Porting: `/dox-admin/governance/REPO_MAPPING.md`
+- Template: `/dox-admin/governance/templates/SERVICE_TEMPLATE/CHECKLIST.md`
 
 ---
 
@@ -699,3 +699,69 @@ All session-specific local files are now organized in:
 **Purpose**: Preserve Phase 1 context for Phase 2 continuation
 **Ready for**: PR and next implementation session
 
+
+---
+
+## Migration Event: Nerve Center Restructure (2025-11-10)
+
+**Status**: ✅ COMPLETE
+**Goal**: Organize the repository into a clean "Nerve Center" with visual dashboard and strict separation of concerns.
+
+### 1. Directory Restructure (The "Clean Slate")
+- **Governance ()**: Created to house all static standards, templates, and reference docs. Moved from `strategy/` and `master/`.
+- **State ()**: Created to house all active data (`memory-banks`, `registry`, `tasks`). Moved from `strategy/` and `continuity/`.
+- **Dashboard ()**: Created source for the Supervisor Web UI (`dashboard/public/index.html`).
+- **Archive ()**: Moved legacy reports, sessions, and scripts to clean the root.
+- **Workspace ()**: Defined area for Worker (Jules) tasks.
+
+### 2. Path Migrations (Breaking Changes)
+- `strategy/standards/` → `governance/standards/`
+- `strategy/memory-banks/` → `state/memory-banks/`
+- `strategy/SERVICES_REGISTRY.md` → `state/registry/SERVICES_REGISTRY.md`
+- `continuity/CONTINUITY_MEMORY.md` → `state/CONTINUITY_MEMORY.md`
+- `strategy/SERVICE_TEMPLATE/` → `governance/templates/SERVICE_TEMPLATE/`
+
+### 3. New Capabilities
+- **Supervisor Dashboard**: A static HTML interface in `dashboard/public/` that visualizes system health.
+- **GitHub Pages Workflow**: Added `.github/workflows/deploy-dashboard.yml` to publish the dashboard.
+
+### 4. Next Agent Instructions
+**CRITICAL**: The file paths have changed. You must:
+1.  Update any external scripts to point to `state/memory-banks/` instead of `strategy/memory-banks/`.
+2.  Verify that `SERVICES_REGISTRY.md` links are functional.
+3.  Use the `dashboard/` to monitor system status.
+
+**See `NEXT_AGENT_HANDOFF.md` for detailed recovery steps.**
+
+---
+
+## Migration Event: Nerve Center Restructure (2025-11-10)
+
+**Status**: ✅ COMPLETE
+**Goal**: Organize the repository into a clean "Nerve Center" with visual dashboard and strict separation of concerns.
+
+### 1. Directory Restructure (The "Clean Slate")
+- **Governance (`governance/`)**: Created to house all static standards, templates, and reference docs. Moved from `strategy/` and `master/`.
+- **State (`state/`)**: Created to house all active data (`memory-banks`, `registry`, `tasks`). Moved from `strategy/` and `continuity/`.
+- **Dashboard (`dashboard/`)**: Created source for the Supervisor Web UI (`dashboard/public/index.html`).
+- **Archive (`archive/`)**: Moved legacy reports, sessions, and scripts to clean the root.
+- **Workspace (`workspace/`)**: Defined area for Worker (Jules) tasks.
+
+### 2. Path Migrations (Breaking Changes)
+- `strategy/standards/` → `governance/standards/`
+- `strategy/memory-banks/` → `state/memory-banks/`
+- `strategy/SERVICES_REGISTRY.md` → `state/registry/SERVICES_REGISTRY.md`
+- `continuity/CONTINUITY_MEMORY.md` → `state/CONTINUITY_MEMORY.md`
+- `strategy/SERVICE_TEMPLATE/` → `governance/templates/SERVICE_TEMPLATE/`
+
+### 3. New Capabilities
+- **Supervisor Dashboard**: A static HTML interface in `dashboard/public/` that visualizes system health.
+- **GitHub Pages Workflow**: Added `.github/workflows/deploy-dashboard.yml` to publish the dashboard.
+
+### 4. Next Agent Instructions
+**CRITICAL**: The file paths have changed. You must:
+1.  Update any external scripts to point to `state/memory-banks/` instead of `strategy/memory-banks/`.
+2.  Verify that `SERVICES_REGISTRY.md` links are functional.
+3.  Use the `dashboard/` to monitor system status.
+
+**See `NEXT_AGENT_HANDOFF.md` for detailed recovery steps.**
