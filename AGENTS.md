@@ -52,16 +52,30 @@ dox-admin/
 - **Requirement**: You MUST update this file after every significant session.
 - **Format**: Date, Session Goal, Changes Made, Next Steps.
 
-### 4. Worker Protocol (Jules)
-- **Task Assignment**: Tasks appear in `state/tasks/pending/`.
+### 4. Worker Protocol (Jules) - 🚀 AI-POWERED (Version 2.0)
+- **MCP Server Integration**: Direct access to Google Jules API with 9 tools, 3 resources, 2 prompts
+- **Multi-Worker Orchestration**: Deploy parallel AI workers for different specializations
+- **Real-time Monitoring**: Background polling every 5 seconds for worker status
+- **Task Assignment**: Deploy workers via MCP tools or assign tasks in `state/tasks/pending/`.
 - **Execution**:
-    1.  Move task to `state/tasks/active/`.
-    2.  Create a workspace in `workspace/<task_id>/`.
-    3.  Execute work (coding, testing).
-    4.  Generate snapshots (if UI) to `workspace/<task_id>/snapshots/`.
+    1.  Deploy Jules worker using `jules_create_worker` tool with specific mission
+    2.  Monitor worker progress via `workers://all` and `worker://{session_id}/status` resources
+    3.  Review AI-generated plans and approve with `jules_approve_plan` tool
+    4.  Send guidance using `jules_send_message` tool if needed
+    5.  Workers execute specialized tasks (memory optimization, documentation, analysis)
+    6.  Generate real-time activity logs via `worker://{session_id}/activities` resource
+- **Learning Integration**: Workers learn project patterns and contribute to shared knowledge
 - **Completion**:
-    1.  Move task to `state/tasks/completed/`.
-    2.  Update `state/memory-banks/SUPERVISOR.json`.
+    1.  Workers auto-update memory banks with discovered insights
+    2.  Move task to `state/tasks/completed/`.
+    3.  Update `state/memory-banks/SUPERVISOR.json` with AI-enhanced knowledge.
+    4.  Workers contribute to `state/CONTINUITY_MEMORY.md` with learned patterns.
+
+### Current AI Workforce Deployments
+- **Worker Alpha**: Memory & Status Optimization Specialist
+- **Worker Beta**: Project Site Enhancement Specialist
+- **Worker Gamma**: Continuance Integration Specialist
+- **Worker Delta**: PACT Platform Analysis Specialist
 
 ## Dashboard & Visualization
 - The **Supervisor Dashboard** is hosted via GitHub Pages from `dashboard/public/`.
