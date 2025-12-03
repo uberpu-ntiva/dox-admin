@@ -1,8 +1,9 @@
 # Jules Protocol: MCP-Bridge Workflow
 
-> **Protocol Version**: 1.0
-> **Context**: Local MCP Bridge (File-Based Coordination)
+> **Protocol Version**: 2.0 🚀
+> **Context**: Direct MCP Server Integration (Live AI Workers)
 > **Role**: Jules (Worker) <-> Supervisor (Orchestrator)
+> **Status**: ✅ ACTIVE WITH GOOGLE JULES API
 
 ## Overview
 
